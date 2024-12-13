@@ -11,6 +11,11 @@ punq = "^0.7.0"
 fastapi = "^0.115.6"
 uvicorn = "^0.32.1"
 pre-commit = "^4.0.1"
+black = "^24.10.0"
+pydantic-settings = "^2.6.1"
+faker = "^33.1.0"
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.0"
 
 
 [build-system]

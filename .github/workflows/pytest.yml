@@ -1,0 +1,39 @@
+name: Pytest CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Клонирование репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Шаг 2: Установка Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # Шаг 3: Установка Poetry
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.local/bin:$PATH"
+
+      # Шаг 4: Установка зависимостей
+      - name: Install dependencies
+        run: poetry install
+
+      # Шаг 5: Запуск тестов
+      - name: Run pytest
+        env:
+          PYTHONPATH: ./app
+          API_PORT: "8000"
+        run: poetry run pytest
