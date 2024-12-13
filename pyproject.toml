@@ -16,6 +16,7 @@ pydantic-settings = "^2.6.1"
 faker = "^33.1.0"
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.0"
+sqlalchemy = "^2.0.36"
 
 
 [build-system]
@@ -46,7 +47,7 @@ skip_glob=[
     ".venv",
 ]
 known_fastapi=["fastapi","starlette"]
-known_first_party=["dtos", "exceptions", "services", "containers"]
+known_first_party=["application","domain","infra","logic","settings","tests"]
 sections=[
     "FUTURE",
     "STDLIB",

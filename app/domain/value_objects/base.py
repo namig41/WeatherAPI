@@ -12,7 +12,7 @@ from typing import (
 _T = TypeVar("_T")
 
 
-@dataclass
+@dataclass(frozen=True)
 class BaseValueObject(ABC, Generic[_T]):
 
     value: _T

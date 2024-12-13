@@ -27,3 +27,15 @@ app-logs:
 .PHONY: shell
 shell:
 	${DC} -f ${APP_FILE} exec ${SERVICE_NAME} /bin/sh
+
+.PHONY: storage
+storage-start:
+	${DC} -f ${STORAGE_FILE} up -d
+
+.PHONY: storage-drop
+storage-drop:
+	${DC} -f ${STORAGE_FILE} down
+
+.PHONY: storage-remove
+storage-rebuild:
+	${DC} -f ${STORAGE_FILE} build --no-cache

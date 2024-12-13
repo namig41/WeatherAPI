@@ -1,5 +1,6 @@
-from domain.entities.user import User
 from faker import Faker
+
+from domain.entities.user import User
 
 
 def test_user_entity(faker: Faker) -> None:

@@ -1,7 +1,8 @@
 from decimal import Decimal
 
-from domain.entities.location import Location
 from faker import Faker
+
+from domain.entities.location import Location
 
 
 def test_location_entity(faker: Faker) -> None:
@@ -9,7 +10,9 @@ def test_location_entity(faker: Faker) -> None:
     latitude: Decimal = faker.latitude()
     longitude: Decimal = faker.longitude()
     location: Location = Location(
-        name, latitude, longitude,
+        name,
+        latitude,
+        longitude,
     )
 
     assert location.name == name

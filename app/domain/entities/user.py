@@ -14,3 +14,11 @@ class User(BaseEntity):
 
     def validate(self):
         return super().validate()
+
+    def __hash__(self):
+        return hash(self.login)
+
+    def __eq__(self, user: object) -> bool:
+        if isinstance(user, User):
+            return self.login == user.login
+        return False
