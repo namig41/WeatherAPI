@@ -2,12 +2,14 @@ from abc import (
     ABC,
     abstractmethod,
 )
+from dataclasses import dataclass
 from typing import Iterable
 
 from domain.entities.location import Location
 from domain.entities.user import User
 
 
+@dataclass
 class BaseUserRepository(ABC):
 
     @abstractmethod
@@ -23,6 +25,7 @@ class BaseUserRepository(ABC):
     async def delete_user_by_login(self, login: str) -> None: ...
 
 
+@dataclass
 class BaseLocationRepository(ABC):
 
     @abstractmethod

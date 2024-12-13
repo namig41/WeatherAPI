@@ -1,8 +1,12 @@
-from dataclasses import field
+from dataclasses import (
+    dataclass,
+    field,
+)
 from typing import Iterable
 
 from domain.entities.location import Location
 from domain.entities.user import User
+from infra.exceptions.base import InfraException
 from infra.exceptions.repository import (
     LocationNotFoundException,
     UserNotFoundException,
@@ -13,9 +17,15 @@ from infra.repository.base import (
 )
 
 
+@dataclass
 class MemoryUserRepository(BaseUserRepository):
 
-    _users: set[User] = field(default_factory=set)
+    _users: set[User] = field(
+        default_factory=set,
+    )
+
+    async def add_user(self, user: User) -> None:
+        self._users.add(user)
 
     async def get_user_by_login(self, login: str) -> User:
         try:
@@ -27,12 +37,19 @@ class MemoryUserRepository(BaseUserRepository):
         return self._users
 
     async def delete_user_by_login(self, login: str) -> None:
-        self._users.remove(User(login, ""))
+        try:
+            user = await self.get_user_by_login(login)
+            self._users.remove(user)
+        except InfraException:
+            raise
 
 
+@dataclass
 class MemoryLocationRepository(BaseLocationRepository):
 
-    _locations: set[Location] = field(default_factory=set)
+    _locations: set[Location] = field(
+        default_factory=set,
+    )
 
     async def add_location(self, location: Location) -> None:
         self._locations.add(location)
@@ -48,4 +65,9 @@ class MemoryLocationRepository(BaseLocationRepository):
     async def get_all_location(self) -> Iterable[Location]:
         return self._locations
 
-    async def delete_location_by_name(self, name: str) -> None: ...
+    async def delete_location_by_name(self, name: str) -> None:
+        try:
+            location = await self.get_location_by_name(name)
+            self._locations.remove(location)
+        except InfraException:
+            raise
