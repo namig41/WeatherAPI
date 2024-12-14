@@ -16,3 +16,11 @@ class Location(BaseEntity):
 
     def validate(self):
         return super().validate()
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, location: object) -> bool:
+        if isinstance(location, Location):
+            return self.name == location.name
+        return False

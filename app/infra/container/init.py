@@ -25,7 +25,9 @@ def _init_container() -> Container:
 
     container.register(BaseUserRepository, MemoryUserRepository, scope=Scope.singleton)
     container.register(
-        BaseLocationRepository, MemoryLocationRepository, scope=Scope.singleton,
+        BaseLocationRepository,
+        MemoryLocationRepository,
+        scope=Scope.singleton,
     )
 
     return container

@@ -43,6 +43,9 @@ class MemoryUserRepository(BaseUserRepository):
         except InfraException:
             raise
 
+    def __len__(self) -> int:
+        return len(self._users)
+
 
 @dataclass
 class MemoryLocationRepository(BaseLocationRepository):
@@ -71,3 +74,6 @@ class MemoryLocationRepository(BaseLocationRepository):
             self._locations.remove(location)
         except InfraException:
             raise
+
+    def __len__(self) -> int:
+        return len(self._locations)
