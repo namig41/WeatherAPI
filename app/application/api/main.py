@@ -3,12 +3,14 @@ from fastapi import FastAPI
 import uvicorn
 
 from application.api.location.router import router as location_router
+from application.api.user.router import router as user_router
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="WeatherAPI", docs_url="/api/docs/", debug=True)
 
     app.include_router(location_router)
+    app.include_router(user_router)
 
     return app
 

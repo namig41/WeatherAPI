@@ -14,7 +14,9 @@ class GetLocationResponseSchema(BaseModel):
     @classmethod
     def from_entity(cls, location: Location) -> "GetLocationResponseSchema":
         return cls(
-            name=location.name, latitude=location.latitude, longitude=location.latitude,
+            name=location.name,
+            latitude=location.latitude,
+            longitude=location.latitude,
         )
 
 

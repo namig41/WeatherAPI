@@ -85,7 +85,9 @@ async def add_location(
             BaseLocationRepository,
         )
         location: Location = Location(
-            location_data.name, location_data.latitude, location_data.longitude,
+            location_data.name,
+            location_data.latitude,
+            location_data.longitude,
         )
         await location_repository.add_location(location)
     except ApplicationException as exception:
