@@ -13,5 +13,8 @@ class Settings(BaseSettings):
     PGADMIN_EMAIL: str
     PGADMIN_PASSWORD: str
 
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+
 
 config = Settings()

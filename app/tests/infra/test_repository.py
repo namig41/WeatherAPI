@@ -18,24 +18,24 @@ from tests.fixtures import (
 
 
 @pytest.mark.asyncio
-async def test_memory_user_repository(container: Container):
-    user_repository: BaseUserRepository = container.resolve(BaseUserRepository)
+async def test_memory_users_repository(container: Container):
+    users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
     user_1: User = next(get_user())
-    await user_repository.add_user(user_1)
+    await users_repository.add_user(user_1)
 
-    assert await user_repository.get_user_by_login(user_1.login) == user_1
+    assert await users_repository.get_user_by_login(user_1.login) == user_1
 
     user_2: User = next(get_user())
-    await user_repository.add_user(user_2)
+    await users_repository.add_user(user_2)
 
-    assert len(user_repository) == 2
+    assert len(users_repository) == 2
 
-    await user_repository.delete_user_by_login(user_1.login)
+    await users_repository.delete_user_by_login(user_1.login)
 
-    assert len(user_repository) == 1
+    assert len(users_repository) == 1
 
     with pytest.raises(UserNotFoundException):
-        await user_repository.get_user_by_login(user_1.login)
+        await users_repository.get_user_by_login(user_1.login)
 
 
 @pytest.mark.asyncio

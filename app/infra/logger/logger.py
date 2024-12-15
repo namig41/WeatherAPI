@@ -41,7 +41,7 @@ def logger_factory(name: str, level: int, stream: TextIO) -> logging.Logger:
     return logger
 
 
-@lru_cache
+@lru_cache(1)
 def create_logger_dependency() -> BaseLogger:
     common_logger: logging.Logger = logger_factory(
         name="common",

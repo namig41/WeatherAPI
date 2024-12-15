@@ -17,6 +17,9 @@ faker = "^33.1.0"
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.0"
 sqlalchemy = "^2.0.36"
+jose = "^1.0.0"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
 
 
 [build-system]
