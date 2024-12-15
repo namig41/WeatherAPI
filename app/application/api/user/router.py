@@ -1,6 +1,13 @@
 from typing import Iterable
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+)
+
 from punq import Container
-from fastapi import APIRouter, Depends, HTTPException, status
 
 from application.api.user.schema import (
     AddNewUserRequestSchema,
@@ -30,7 +37,7 @@ async def get_all_user(
         users: Iterable[User] = await user_repository.get_all_user()
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message},
         )
     return GetUsersResponseSchema.from_entity(users)
 
@@ -42,14 +49,14 @@ async def get_all_user(
     description="Получение пользователя по логину",
 )
 async def get_user(
-    login: str, container: Container = Depends(init_container)
+    login: str, container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
         user_repository: BaseUserRepository = container.resolve(BaseUserRepository)
         user: User = await user_repository.get_user_by_login(login=login)
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message},
         )
     return GetUserResponseSchema.from_entity(user)
 
@@ -61,7 +68,7 @@ async def get_user(
     description="Добавление пользователя",
 )
 async def add_user(
-    user_data: AddNewUserRequestSchema, container: Container = Depends(init_container)
+    user_data: AddNewUserRequestSchema, container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
         user_repository: BaseUserRepository = container.resolve(BaseUserRepository)
@@ -69,6 +76,6 @@ async def add_user(
         await user_repository.add_user(user)
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST, detail={"error": exception.message},
         )
     return GetUserResponseSchema.from_entity(user)
