@@ -9,13 +9,12 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse
 
+from infrastructure.auth.access_token_processor import AccessTokenProcessor
+from infrastructure.jwt.base import JWTToken
+from infrastructure.repository.base import BaseUserRepository
+from presenter.di.container import init_container
 from punq import Container
 
-from application.api.user.auth import (
-    authenticate_user,
-    create_access_token,
-    verify_plain_password,
-)
 from application.api.user.schema import (
     AddNewUserRequestSchema,
     GetUserResponseSchema,
@@ -23,8 +22,9 @@ from application.api.user.schema import (
 )
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from infra.container.init import init_container
-from infra.repository.base import BaseUserRepository
+from domain.interfaces.infrastructure.access_service import BaseAccessService
+from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.value_objects.raw_password import RawPassword
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -83,7 +83,10 @@ async def add_user(
 ) -> GetUserResponseSchema:
     try:
         users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        user: User = User(user_data.login, user_data.password)
+        hasher_password: BasePasswordHasher = container.resolve(BasePasswordHasher)
+        user: User = User.create_with_raw_password(
+            user_data.login, RawPassword(user_data.password), hasher_password,
+        )
         await users_repository.add_user(user)
     except ApplicationException as exception:
         raise HTTPException(
@@ -104,10 +107,16 @@ async def login_user(
     container: Container = Depends(init_container),
 ):
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        user: User = User(user_data.login, user_data.password)
-        user = await authenticate_user(user, users_repository, verify_plain_password)
-        access_token = create_access_token({"sub": str(user.login)})
+        token_access_service: BaseAccessService = container.resolve(BaseAccessService)
+        access_token_processor: AccessTokenProcessor = container.resolve(
+            AccessTokenProcessor,
+        )
+        login: str = user_data.login
+        raw_password: RawPassword = RawPassword(user_data.password)
+        await token_access_service.authorize(login, raw_password)
+        access_token: JWTToken = access_token_processor.create_access_token(
+            {"sub": str(login)},
+        )
         response.set_cookie("access_token", access_token, httponly=True)
     except ApplicationException as exception:
         raise HTTPException(

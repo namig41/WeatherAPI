@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import TextIO
 
-from infra.logger.base import BaseLogger
+from infrastructure.logger.base import BaseLogger
 
 
 @dataclass

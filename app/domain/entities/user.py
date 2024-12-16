@@ -4,16 +4,29 @@ from dataclasses import (
 )
 
 from domain.entities.base import BaseEntity
+from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.value_objects.hashed_password import HashedPassword
+from domain.value_objects.raw_password import RawPassword
 
 
 @dataclass
 class User(BaseEntity):
     id: int = field(init=False)
     login: str
-    password: str
+    hashed_password: HashedPassword
 
     def validate(self):
         return super().validate()
+
+    @classmethod
+    def create_with_raw_password(
+        cls,
+        login: str,
+        raw_password: RawPassword,
+        password_hasher: BasePasswordHasher,
+    ) -> "User":
+        hashed_password: HashedPassword = password_hasher.hash_password(raw_password)
+        return cls(login=login, hashed_password=hashed_password)
 
     def __hash__(self):
         return hash(self.login)

@@ -11,7 +11,7 @@ class GetUserResponseSchema(BaseModel):
 
     @classmethod
     def from_entity(cls, user: User) -> "GetUserResponseSchema":
-        return cls(login=user.login, password=user.password)
+        return cls(login=user.login, password=user.hashed_password.value)
 
 
 class GetUsersResponseSchema(BaseModel):

@@ -1,4 +1,4 @@
-from infra.exceptions.base import InfraException
+from infrastructure.exceptions.base import InfraException
 
 
 class UserNotFoundException(InfraException):

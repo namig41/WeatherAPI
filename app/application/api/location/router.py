@@ -7,6 +7,8 @@ from fastapi import (
     status,
 )
 
+from infrastructure.repository.base import BaseLocationRepository
+from presenter.di.container import init_container
 from punq import Container
 
 from application.api.location.schema import (
@@ -16,8 +18,6 @@ from application.api.location.schema import (
 )
 from domain.entities.location import Location
 from domain.exceptions.base import ApplicationException
-from infra.container.init import init_container
-from infra.repository.base import BaseLocationRepository
 
 
 router = APIRouter(prefix="/locations", tags=["Location"])

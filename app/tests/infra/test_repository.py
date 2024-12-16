@@ -1,16 +1,16 @@
 import pytest
+from infrastructure.exceptions.repository import (
+    LocationNotFoundException,
+    UserNotFoundException,
+)
+from infrastructure.repository.base import (
+    BaseLocationRepository,
+    BaseUserRepository,
+)
 from punq import Container
 
 from domain.entities.location import Location
 from domain.entities.user import User
-from infra.exceptions.repository import (
-    LocationNotFoundException,
-    UserNotFoundException,
-)
-from infra.repository.base import (
-    BaseLocationRepository,
-    BaseUserRepository,
-)
 from tests.fixtures import (
     get_location,
     get_user,
