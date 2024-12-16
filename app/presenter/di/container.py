@@ -1,5 +1,4 @@
 from functools import lru_cache
-from logging import Logger
 
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.auth.password_hasher import SimplePasswordHasher
@@ -7,6 +6,7 @@ from infrastructure.auth.token_access_service import PasswordAuthService
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.jwt_processor import py_jwt_processor_factory
 from infrastructure.logger.base import BaseLogger
+from infrastructure.logger.logger import create_logger_dependency
 from infrastructure.repository.base import (
     BaseLocationRepository,
     BaseUserRepository,
@@ -51,7 +51,7 @@ def _init_container() -> Container:
 
     container.register(
         BaseLogger,
-        Logger,
+        factory=create_logger_dependency,
         scope=Scope.singleton,
     )
 
@@ -69,6 +69,9 @@ def _init_container() -> Container:
 
     container.register(
         AccessTokenProcessor,
+        factory=lambda: AccessTokenProcessor(
+            jwt_processor=py_jwt_processor_factory(),
+        ),
         scope=Scope.singleton,
     )
 

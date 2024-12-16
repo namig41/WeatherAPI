@@ -108,9 +108,7 @@ async def login_user(
 ):
     try:
         token_access_service: BaseAccessService = container.resolve(BaseAccessService)
-        access_token_processor: AccessTokenProcessor = container.resolve(
-            AccessTokenProcessor,
-        )
+        access_token_processor: AccessTokenProcessor = container.resolve(AccessTokenProcessor)
         login: str = user_data.login
         raw_password: RawPassword = RawPassword(user_data.password)
         await token_access_service.authorize(login, raw_password)
