@@ -33,6 +33,12 @@ def _init_container() -> Container:
     container = Container()
 
     container.register(
+        BaseLogger,
+        factory=create_logger_dependency,
+        scope=Scope.singleton,
+    )
+
+    container.register(
         BaseUserRepository,
         MemoryUserRepository,
         scope=Scope.singleton,
@@ -50,12 +56,6 @@ def _init_container() -> Container:
     )
 
     container.register(
-        BaseLogger,
-        factory=create_logger_dependency,
-        scope=Scope.singleton,
-    )
-
-    container.register(
         BaseAccessService,
         PasswordAuthService,
         scope=Scope.singleton,
@@ -69,9 +69,6 @@ def _init_container() -> Container:
 
     container.register(
         AccessTokenProcessor,
-        factory=lambda: AccessTokenProcessor(
-            jwt_processor=py_jwt_processor_factory(),
-        ),
         scope=Scope.singleton,
     )
 

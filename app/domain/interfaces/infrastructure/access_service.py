@@ -1,9 +1,13 @@
-from abc import abstractmethod
-from typing import Protocol
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from dataclasses import dataclass
 
 from domain.value_objects.raw_password import RawPassword
 
 
-class BaseAccessService(Protocol):
+@dataclass
+class BaseAccessService(ABC):
     @abstractmethod
     async def authorize(self, login: str, raw_password: RawPassword) -> None: ...

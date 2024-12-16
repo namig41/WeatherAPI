@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from infrastructure.exceptions.auth import PasswordMismatchException
 
 from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
@@ -5,6 +7,7 @@ from domain.value_objects.hashed_password import HashedPassword
 from domain.value_objects.raw_password import RawPassword
 
 
+@dataclass
 class SimplePasswordHasher(BasePasswordHasher):
     def hash_password(self, password: RawPassword) -> HashedPassword:
         return HashedPassword(password.value)

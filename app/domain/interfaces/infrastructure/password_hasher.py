@@ -1,11 +1,15 @@
-from abc import abstractmethod
-from typing import Protocol
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from dataclasses import dataclass
 
 from domain.value_objects.hashed_password import HashedPassword
 from domain.value_objects.raw_password import RawPassword
 
 
-class BasePasswordHasher(Protocol):
+@dataclass
+class BasePasswordHasher(ABC):
     @abstractmethod
     def hash_password(self, password: RawPassword) -> HashedPassword: ...
 

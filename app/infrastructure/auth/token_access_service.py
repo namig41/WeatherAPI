@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from infrastructure.repository.base import BaseUserRepository
 
 from application.api.exceptions.user import UserAuthFailedException
@@ -8,6 +10,7 @@ from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
 from domain.value_objects.raw_password import RawPassword
 
 
+@dataclass
 class PasswordAuthService(BaseAccessService):
     users_repository: BaseUserRepository
     password_hasher: BasePasswordHasher
