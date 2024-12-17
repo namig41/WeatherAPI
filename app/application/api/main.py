@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 import uvicorn
 
+from application.api.auth.router import router as auth_router
 from application.api.location.router import router as location_router
 from application.api.user.router import router as user_router
 
@@ -11,6 +12,7 @@ def create_app() -> FastAPI:
 
     app.include_router(location_router)
     app.include_router(user_router)
+    app.include_router(auth_router)
 
     return app
 

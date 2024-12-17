@@ -22,8 +22,8 @@ class RawPassword(BaseValueObject[str]):
 
     def validate(self):
         error_messages = {
-            "Пароль должен состоять не менее \
-            из 8 символов": lambda x: len(x) >= MIN_PASSWORD_LENGHT,
+            "Пароль должен состоять не менее из 8 символов": lambda x: len(x)
+            >= MIN_PASSWORD_LENGHT,  # noqa: W503
             "Пароль должен содержать заглавную букву.": lambda s: any(
                 x.isupper() for x in s
             ),
@@ -34,8 +34,7 @@ class RawPassword(BaseValueObject[str]):
             "Пароль не должен содержать пробелы.": lambda s: not any(
                 x.isspace() for x in s
             ),
-            "Пароль должен содержать в себе специальный \
-            символ (@, #, $, %)": has_special_symbols,
+            "Пароль должен содержать в себе специальный символ (@, #, $, %)": has_special_symbols,
         }
 
         for message, password_validator in error_messages.items():

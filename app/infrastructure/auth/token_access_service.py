@@ -19,7 +19,8 @@ class PasswordAuthService(BaseAccessService):
         try:
             user: User = await self.users_repository.get_user_by_login(login=login)
             if not self.password_hasher.verify_password(
-                raw_password, user.hashed_password,
+                raw_password,
+                user.hashed_password,
             ):
                 raise UserAuthFailedException()
         except ApplicationException:

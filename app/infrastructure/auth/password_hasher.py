@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from infrastructure.exceptions.auth import PasswordMismatchException
-
 from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
 from domain.value_objects.hashed_password import HashedPassword
 from domain.value_objects.raw_password import RawPassword
@@ -16,6 +14,5 @@ class SimplePasswordHasher(BasePasswordHasher):
         self,
         raw_password: RawPassword,
         hashed_password: HashedPassword,
-    ) -> None:
-        if raw_password.value != hashed_password.value:
-            raise PasswordMismatchException()
+    ) -> bool:
+        return raw_password.value == hashed_password.value

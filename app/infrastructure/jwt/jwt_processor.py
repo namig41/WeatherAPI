@@ -26,7 +26,9 @@ class PyJWTProcessor(BaseJWTProcessor):
     def decode(self, token: JWTToken) -> JWTPayload:
         try:
             return jwt.decode(
-                token, self.jwt_config.key, algorithms=[self.jwt_config.algorithm],
+                token,
+                self.jwt_config.key,
+                algorithms=[self.jwt_config.algorithm],
             )
         except jwt.ExpiredSignatureError:
             raise JWTExpiredException()
