@@ -1,28 +1,34 @@
-from functools import lru_cache
+from functools import (
+    lru_cache,
+    partial,
+)
 
+from infrastructure.auth.access_service import PasswordAuthService
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.auth.password_hasher import SimplePasswordHasher
-from infrastructure.auth.token_access_service import PasswordAuthService
+from infrastructure.database.config import DBConfig
+from infrastructure.database.init import init_database
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
-from infrastructure.logger.base import BaseLogger
+from infrastructure.logger.base import ILogger
 from infrastructure.logger.logger import create_logger_dependency
 from infrastructure.repository.base import (
     BaseLocationRepository,
     BaseUserRepository,
 )
-from infrastructure.repository.memory import (
-    MemoryLocationRepository,
-    MemoryUserRepository,
+from infrastructure.repository.postgres import (
+    PostgreSQLLocationRepository,
+    PostgreSQLUserRepository,
 )
 from punq import (
     Container,
     Scope,
 )
+from sqlalchemy import Engine
 
-from domain.interfaces.infrastructure.access_service import BaseAccessService
-from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.interfaces.infrastructure.access_service import IAccessService
+from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from settings.config import (
     config,
     Settings,
@@ -55,30 +61,44 @@ def _init_container() -> Container:
     )
 
     container.register(
-        BaseLogger,
+        ILogger,
         factory=create_logger_dependency,
+        scope=Scope.singleton,
+    )
+
+    db_config: DBConfig = DBConfig()
+
+    container.register(
+        DBConfig,
+        isinstance=db_config,
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        Engine,
+        factory=partial(init_database, db_config=db_config),
         scope=Scope.singleton,
     )
 
     container.register(
         BaseUserRepository,
-        MemoryUserRepository,
+        PostgreSQLUserRepository,
         scope=Scope.singleton,
     )
     container.register(
         BaseLocationRepository,
-        MemoryLocationRepository,
+        PostgreSQLLocationRepository,
         scope=Scope.singleton,
     )
 
     container.register(
-        BasePasswordHasher,
+        IPasswordHasher,
         SimplePasswordHasher,
         scope=Scope.singleton,
     )
 
     container.register(
-        BaseAccessService,
+        IAccessService,
         PasswordAuthService,
         scope=Scope.singleton,
     )

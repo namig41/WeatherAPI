@@ -2,11 +2,12 @@ from decimal import Decimal
 from typing import Generator
 
 from faker import Faker
-from presenter.di.container import _init_container
 from punq import Container
 
+from application.di.container import _init_container
 from domain.entities.location import Location
 from domain.entities.user import User
+from domain.value_objects.hashed_password import HashedPassword
 
 
 def init_dummy_container() -> Container:
@@ -20,7 +21,8 @@ def get_user() -> Generator[User, None, None]:
     while True:
         login: str = faker.name()
         password: str = faker.password()
-        yield User(login, password)
+
+        yield User(login, HashedPassword(password))
 
 
 def get_location() -> Generator[Location, None, None]:

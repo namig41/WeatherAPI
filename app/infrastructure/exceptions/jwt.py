@@ -7,11 +7,11 @@ from infrastructure.exceptions.base import InfraException
 class JWTDecodeException(InfraException):
     @property
     def message(self):
-        return "Ошибка декодирования"
+        return "Ошибка декодирования токена"
 
 
 @dataclass(eq=False)
 class JWTExpiredException(InfraException):
     @property
     def message(self):
-        return "Ошибка декодирования"
+        return "Истек срок действия токена"

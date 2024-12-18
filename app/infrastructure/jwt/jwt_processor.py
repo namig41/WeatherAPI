@@ -8,7 +8,7 @@ from infrastructure.exceptions.jwt import (
 )
 from infrastructure.jwt.base import (
     BaseJWTProcessor,
-    JWTPayload,
+    JWTPayloadDict,
     JWTToken,
 )
 from infrastructure.jwt.config import JWTConfig
@@ -20,10 +20,10 @@ from settings.config import config
 class PyJWTProcessor(BaseJWTProcessor):
     jwt_config: JWTConfig
 
-    def encode(self, payload: JWTPayload) -> JWTToken:
+    def encode(self, payload: JWTPayloadDict) -> JWTToken:
         return jwt.encode(payload, self.jwt_config.key, self.jwt_config.algorithm)
 
-    def decode(self, token: JWTToken) -> JWTPayload:
+    def decode(self, token: JWTToken) -> JWTPayloadDict:
         try:
             return jwt.decode(
                 token,

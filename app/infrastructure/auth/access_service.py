@@ -1,19 +1,19 @@
 from dataclasses import dataclass
 
+from infrastructure.exceptions.auth import UserAuthFailedException
 from infrastructure.repository.base import BaseUserRepository
 
-from application.api.exceptions.user import UserAuthFailedException
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from domain.interfaces.infrastructure.access_service import BaseAccessService
-from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.interfaces.infrastructure.access_service import IAccessService
+from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 
 
 @dataclass
-class PasswordAuthService(BaseAccessService):
+class PasswordAuthService(IAccessService):
     users_repository: BaseUserRepository
-    password_hasher: BasePasswordHasher
+    password_hasher: IPasswordHasher
 
     async def authorize(self, login: str, raw_password: RawPassword) -> None:
         try:

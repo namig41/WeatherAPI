@@ -1,14 +1,21 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import (
+    datetime,
+    timezone,
+)
 
+from infrastructure.exceptions.auth import UserAuthFailedException
+from infrastructure.jwt.access_token import (
+    AccessToken,
+    JWTPayload,
+)
 from infrastructure.jwt.base import (
     BaseJWTProcessor,
-    JWTPayload,
+    JWTPayloadDict,
     JWTToken,
 )
 
-from application.api.auth.dto import AccessTokenDTO
-from application.api.exceptions.user import UserAuthFailedException
+from domain.exceptions.base import ApplicationException
 
 
 @dataclass
@@ -17,27 +24,23 @@ class AccessTokenProcessor:
 
     def encode(
         self,
-        token: AccessTokenDTO,
+        token: AccessToken,
     ) -> JWTToken:
-        jwt_token_payload: JWTPayload = {
-            "sub": {"login": token.login},
+        jwt_token_payload: JWTPayloadDict = {
+            "sub": token.payload.to_dict(),
             "exp": token.expires_in,
         }
-        encoded_jwt = self.jwt_processor.encode(jwt_token_payload)
-        return encoded_jwt
+        return self.jwt_processor.encode(jwt_token_payload)
 
-    def decode(self, token: JWTToken) -> AccessTokenDTO:
+    def decode(self, token: JWTToken) -> AccessToken:
         try:
-            payload = self.jwt_processor.decode(token)
-            sub = payload["sub"]
-
-            login = sub["login"]
-            expires_in = datetime.fromtimestamp(float(payload["exp"]))
-            access_token = AccessTokenDTO(
-                login=login,
-                expires_in=expires_in,
+            payload: JWTPayloadDict = self.jwt_processor.decode(token)
+            access_token = AccessToken(
+                payload=JWTPayload.from_dict(payload),
+                expires_in=datetime.fromtimestamp(payload["exp"], tz=timezone.utc),
             )
-
             return access_token
+        except ApplicationException:
+            raise
         except (ValueError, TypeError, KeyError):
             raise UserAuthFailedException()

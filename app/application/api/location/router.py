@@ -8,7 +8,6 @@ from fastapi import (
 )
 
 from infrastructure.repository.base import BaseLocationRepository
-from presenter.di.container import init_container
 from punq import Container
 
 from application.api.location.schema import (
@@ -16,6 +15,7 @@ from application.api.location.schema import (
     GetLocationResponseSchema,
     GetLocationsResponseSchema,
 )
+from application.di.container import init_container
 from domain.entities.location import Location
 from domain.exceptions.base import ApplicationException
 

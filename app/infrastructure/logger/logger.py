@@ -1,14 +1,12 @@
 import logging
 import sys
-from dataclasses import dataclass
 from functools import lru_cache
 from typing import TextIO
 
-from infrastructure.logger.base import BaseLogger
+from infrastructure.logger.base import ILogger
 
 
-@dataclass
-class Logger(BaseLogger):
+class Logger(ILogger):
 
     logger: logging.Logger
     error_logger: logging.Logger
@@ -42,7 +40,7 @@ def logger_factory(name: str, level: int, stream: TextIO) -> logging.Logger:
 
 
 @lru_cache(1)
-def create_logger_dependency() -> BaseLogger:
+def create_logger_dependency() -> ILogger:
     common_logger: logging.Logger = logger_factory(
         name="common",
         level=logging.INFO,

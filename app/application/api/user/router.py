@@ -8,7 +8,6 @@ from fastapi import (
 )
 
 from infrastructure.repository.base import BaseUserRepository
-from presenter.di.container import init_container
 from punq import Container
 
 from application.api.user.schema import (
@@ -16,9 +15,10 @@ from application.api.user.schema import (
     GetUserResponseSchema,
     GetUsersResponseSchema,
 )
+from application.di.container import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 
 
@@ -78,7 +78,7 @@ async def add_user(
 ) -> GetUserResponseSchema:
     try:
         users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        hasher_password: BasePasswordHasher = container.resolve(BasePasswordHasher)
+        hasher_password: IPasswordHasher = container.resolve(IPasswordHasher)
         user: User = User.create_with_raw_password(
             user_data.login,
             RawPassword(user_data.password),

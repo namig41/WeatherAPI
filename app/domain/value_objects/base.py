@@ -25,3 +25,11 @@ class BaseValueObject(ABC, Generic[_T]):
 
     def as_type_value(self) -> _T:
         return self.value
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, self.__class__):
+            return self.value == other
+        return self.value == other.value
+
+    def __str__(self) -> str:
+        return str(self.value)

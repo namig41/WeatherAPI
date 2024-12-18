@@ -1,10 +1,8 @@
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import abstractmethod
+from typing import Protocol
 
 
-class BaseLogger(ABC):
+class ILogger(Protocol):
 
     @abstractmethod
     def info(self, message: str) -> None: ...

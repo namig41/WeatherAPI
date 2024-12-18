@@ -11,6 +11,7 @@ from domain.entities.base import BaseEntity
 class Location(BaseEntity):
     id: int = field(init=False)
     name: str
+    user_id: int = field(init=False)
     latitude: Decimal
     longitude: Decimal
 

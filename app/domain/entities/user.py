@@ -4,7 +4,7 @@ from dataclasses import (
 )
 
 from domain.entities.base import BaseEntity
-from domain.interfaces.infrastructure.password_hasher import BasePasswordHasher
+from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.hashed_password import HashedPassword
 from domain.value_objects.raw_password import RawPassword
 
@@ -23,7 +23,7 @@ class User(BaseEntity):
         cls,
         login: str,
         raw_password: RawPassword,
-        password_hasher: BasePasswordHasher,
+        password_hasher: IPasswordHasher,
     ) -> "User":
         hashed_password: HashedPassword = password_hasher.hash_password(raw_password)
         return cls(login=login, hashed_password=hashed_password)

@@ -20,7 +20,7 @@ def has_special_symbols(string: str) -> bool:
 @dataclass(frozen=True)
 class RawPassword(BaseValueObject[str]):
 
-    def validate(self):
+    def validate(self) -> None:
         error_messages = {
             "Пароль должен состоять не менее из 8 символов": lambda x: len(x)
             >= MIN_PASSWORD_LENGHT,  # noqa: W503
