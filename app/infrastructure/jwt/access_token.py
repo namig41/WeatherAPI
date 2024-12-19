@@ -45,7 +45,9 @@ class AccessToken(BaseEntity):
 
     @classmethod
     def create_with_expiration(
-        cls, payload: JWTPayload, minutes: int = 5,
+        cls,
+        payload: JWTPayload,
+        minutes: int = 5,
     ) -> "AccessToken":
         return cls(
             payload=payload,
@@ -54,7 +56,9 @@ class AccessToken(BaseEntity):
 
     @classmethod
     def from_payload_dict(
-        cls, payload_dict: JWTPayloadDict, minutes: int = 5,
+        cls,
+        payload_dict: JWTPayloadDict,
+        minutes: int = 5,
     ) -> "AccessToken":
         payload = JWTPayload.from_dict(payload_dict)
         return cls.create_with_expiration(payload=payload, minutes=minutes)

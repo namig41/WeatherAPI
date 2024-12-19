@@ -1,7 +1,4 @@
-from dataclasses import (
-    dataclass,
-    field,
-)
+from dataclasses import dataclass
 from decimal import Decimal
 
 from domain.entities.base import BaseEntity
@@ -9,14 +6,13 @@ from domain.entities.base import BaseEntity
 
 @dataclass
 class Location(BaseEntity):
-    id: int = field(init=False)
     name: str
-    user_id: int = field(init=False)
     latitude: Decimal
     longitude: Decimal
+    id: int | None = None
+    user_id: int | None = None
 
-    def validate(self):
-        return super().validate()
+    def validate(self) -> None: ...
 
     def __hash__(self) -> int:
         return hash(self.name)

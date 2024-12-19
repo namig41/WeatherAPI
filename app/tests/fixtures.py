@@ -2,7 +2,18 @@ from decimal import Decimal
 from typing import Generator
 
 from faker import Faker
-from punq import Container
+from infrastructure.repository.base import (
+    BaseLocationRepository,
+    BaseUserRepository,
+)
+from infrastructure.repository.postgres import (
+    PostgreSQLLocationRepository,
+    PostgreSQLUserRepository,
+)
+from punq import (
+    Container,
+    Scope,
+)
 
 from application.di.container import _init_container
 from domain.entities.location import Location
@@ -12,6 +23,18 @@ from domain.value_objects.hashed_password import HashedPassword
 
 def init_dummy_container() -> Container:
     container: Container = _init_container()
+
+    container.register(
+        BaseUserRepository,
+        PostgreSQLUserRepository,
+        scope=Scope.singleton,
+    )
+    container.register(
+        BaseLocationRepository,
+        PostgreSQLLocationRepository,
+        scope=Scope.singleton,
+    )
+
     return container
 
 
@@ -21,7 +44,6 @@ def get_user() -> Generator[User, None, None]:
     while True:
         login: str = faker.name()
         password: str = faker.password()
-
         yield User(login, HashedPassword(password))
 
 

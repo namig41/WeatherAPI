@@ -25,7 +25,7 @@ from punq import (
     Container,
     Scope,
 )
-from sqlalchemy import Engine
+from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from domain.interfaces.infrastructure.access_service import IAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
@@ -75,7 +75,7 @@ def _init_container() -> Container:
     )
 
     container.register(
-        Engine,
+        AsyncEngine,
         factory=partial(init_database, db_config=db_config),
         scope=Scope.singleton,
     )

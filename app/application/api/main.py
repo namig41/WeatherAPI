@@ -2,17 +2,20 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
-from infrastructure.database.models import create_database
-from sqlalchemy import Engine
 
 from application.api.auth.router import router as auth_router
+from application.api.lifespan import lifespan
 from application.api.location.router import router as location_router
 from application.api.user.router import router as user_router
-from application.di.container import init_container
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="WeatherAPI", docs_url="/api/docs/", debug=True)
+    app = FastAPI(
+        title="WeatherAPI",
+        docs_url="/api/docs/",
+        debug=True,
+        lifespan=lifespan,
+    )
 
     app.include_router(location_router)
     app.include_router(user_router)
@@ -32,10 +35,6 @@ def create_app() -> FastAPI:
 
 
 if __name__ == "__main__":
-    container = init_container()
-
-    engine: Engine = container.resolve(Engine)
-    create_database(engine)
 
     uvicorn.run(
         "main:create_app",
