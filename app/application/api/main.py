@@ -21,7 +21,10 @@ def create_app() -> FastAPI:
     app.include_router(user_router)
     app.include_router(auth_router)
 
-    origins = ["http://localhost:8000"]
+    origins = [
+        "http://localhost:8000",
+        "http://localhost",
+    ]
 
     app.add_middleware(
         CORSMiddleware,

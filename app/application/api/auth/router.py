@@ -50,7 +50,12 @@ async def login_user(
         payload: JWTPayload = JWTPayload.from_dict({"login": user_data.login})
         access_token: AccessToken = AccessToken.create_with_expiration(payload)
         jwt_token: JWTToken = access_token_processor.encode(access_token)
-        response.set_cookie(key="access_token", value=jwt_token, httponly=True)
+        response.set_cookie(
+            key="access_token",
+            value=jwt_token,
+            samesite="lax",
+            secure=False,
+        )
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
