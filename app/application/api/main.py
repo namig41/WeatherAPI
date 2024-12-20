@@ -7,19 +7,16 @@ from application.api.auth.router import router as auth_router
 from application.api.lifespan import lifespan
 from application.api.location.router import router as location_router
 from application.api.user.router import router as user_router
+from application.api.weather.router import router as weather_router
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(
+    app: FastAPI = FastAPI(
         title="WeatherAPI",
         docs_url="/api/docs/",
         debug=True,
         lifespan=lifespan,
     )
-
-    app.include_router(location_router)
-    app.include_router(user_router)
-    app.include_router(auth_router)
 
     origins = [
         "http://localhost:8000",
@@ -33,6 +30,11 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    app.include_router(location_router)
+    app.include_router(user_router)
+    app.include_router(auth_router)
+    app.include_router(weather_router)
 
     return app
 

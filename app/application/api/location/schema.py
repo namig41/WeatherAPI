@@ -6,13 +6,13 @@ from pydantic import BaseModel
 from domain.entities.location import Location
 
 
-class GetLocationResponseSchema(BaseModel):
+class LocationResponseSchema(BaseModel):
     name: str
     latitude: Decimal
     longitude: Decimal
 
     @classmethod
-    def from_entity(cls, location: Location) -> "GetLocationResponseSchema":
+    def from_entity(cls, location: Location) -> "LocationResponseSchema":
         return cls(
             name=location.name,
             latitude=location.latitude,
@@ -20,15 +20,14 @@ class GetLocationResponseSchema(BaseModel):
         )
 
 
-class GetLocationsResponseSchema(BaseModel):
-    locations: Iterable[GetLocationResponseSchema]
+class LocationsResponseSchema(BaseModel):
+    locations: Iterable[LocationResponseSchema]
 
     @classmethod
-    def from_entity(cls, locations: Iterable[Location]) -> "GetLocationsResponseSchema":
+    def from_entity(cls, locations: Iterable[Location]) -> "LocationsResponseSchema":
         return cls(
             locations=[
-                GetLocationResponseSchema.from_entity(location)
-                for location in locations
+                LocationResponseSchema.from_entity(location) for location in locations
             ],
         )
 

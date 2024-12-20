@@ -51,7 +51,7 @@ def get_location() -> Generator[Location, None, None]:
     faker = Faker()
 
     while True:
-        login: str = faker.name()
+        location: str = faker.city()
         latitude: Decimal = faker.latitude()
         longitude: Decimal = faker.longitude()
-        yield Location(login, latitude, longitude)
+        yield Location(location, latitude, longitude)

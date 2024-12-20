@@ -21,6 +21,9 @@ from infrastructure.repository.postgres import (
     PostgreSQLLocationRepository,
     PostgreSQLUserRepository,
 )
+from infrastructure.weather.base import IWeatherAPIService
+from infrastructure.weather.config import WeatherAPIConfig
+from infrastructure.weather.open_weather_api import OpenWeatherAPIService
 from punq import (
     Container,
     Scope,
@@ -111,6 +114,22 @@ def _init_container() -> Container:
 
     container.register(
         AccessTokenProcessor,
+        scope=Scope.singleton,
+    )
+
+    weather_api_config: WeatherAPIConfig = WeatherAPIConfig(
+        config.WEATHER_API_KEY, config.WEATHER_API_URL,
+    )
+
+    container.register(
+        WeatherAPIConfig,
+        instance=weather_api_config,
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        IWeatherAPIService,
+        OpenWeatherAPIService,
         scope=Scope.singleton,
     )
 

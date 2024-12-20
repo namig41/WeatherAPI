@@ -12,7 +12,7 @@ Algorithm = Literal[
 ]
 
 
-@dataclass
+@dataclass(frozen=True)
 class JWTConfig:
     key: str
     algorithm: Algorithm

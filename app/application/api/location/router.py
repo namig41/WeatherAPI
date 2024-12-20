@@ -12,8 +12,8 @@ from punq import Container
 
 from application.api.location.schema import (
     AddNewLocationRequestSchema,
-    GetLocationResponseSchema,
-    GetLocationsResponseSchema,
+    LocationResponseSchema,
+    LocationsResponseSchema,
 )
 from application.di.container import init_container
 from domain.entities.location import Location
@@ -26,12 +26,12 @@ router = APIRouter(prefix="/locations", tags=["Location"])
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=GetLocationsResponseSchema,
+    response_model=LocationsResponseSchema,
     description="Получение всех локаций",
 )
 async def get_all_location(
     container: Container = Depends(init_container),
-) -> GetLocationsResponseSchema:
+) -> LocationsResponseSchema:
     try:
         location_repository: BaseLocationRepository = container.resolve(
             BaseLocationRepository,
@@ -42,19 +42,19 @@ async def get_all_location(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": exception.message},
         )
-    return GetLocationsResponseSchema.from_entity(locations)
+    return LocationsResponseSchema.from_entity(locations)
 
 
 @router.get(
     "/{name}",
     status_code=status.HTTP_200_OK,
-    response_model=GetLocationResponseSchema,
+    response_model=LocationResponseSchema,
     description="Получение локации по имени",
 )
 async def get_location(
     location_name: str,
     container: Container = Depends(init_container),
-) -> GetLocationResponseSchema:
+) -> LocationResponseSchema:
     try:
         location_repository: BaseLocationRepository = container.resolve(
             BaseLocationRepository,
@@ -67,19 +67,19 @@ async def get_location(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": exception.message},
         )
-    return GetLocationResponseSchema.from_entity(location)
+    return LocationResponseSchema.from_entity(location)
 
 
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=GetLocationResponseSchema,
+    response_model=LocationResponseSchema,
     description="Добавление новой локации",
 )
 async def add_location(
     location_data: AddNewLocationRequestSchema,
     container: Container = Depends(init_container),
-) -> GetLocationResponseSchema:
+) -> LocationResponseSchema:
     try:
         location_repository: BaseLocationRepository = container.resolve(
             BaseLocationRepository,
@@ -95,4 +95,4 @@ async def add_location(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": exception.message},
         )
-    return GetLocationResponseSchema.from_entity(location)
+    return LocationResponseSchema.from_entity(location)
