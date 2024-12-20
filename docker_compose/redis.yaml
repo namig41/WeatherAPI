@@ -1,0 +1,13 @@
+services:
+  redis:
+    image: redis:6
+    container_name: redis
+    restart: unless-stopped
+    expose:
+        - ${CACHE_PORT}
+    networks:
+        - backend
+
+networks:
+  backend:
+    driver: bridge

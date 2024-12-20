@@ -18,7 +18,9 @@ async def test_authorize_service(faker: Faker, container: Container):
 
     raw_password: RawPassword = RawPassword(faker.password())
     user: User = User.create_with_raw_password(
-        faker.name_male(), raw_password, password_hasher,
+        faker.name_male(),
+        raw_password,
+        password_hasher,
     )
     await users_repository.add_user(user)
 

@@ -11,5 +11,6 @@ class IWeatherAPIService(Protocol):
 
     @abstractmethod
     async def get_weather_by_location_coordinates(
-        self, location: Location,
+        self,
+        location: Location,
     ) -> Weather: ...

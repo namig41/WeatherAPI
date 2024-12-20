@@ -3,9 +3,16 @@ from functools import (
     partial,
 )
 
+from aioredis import Redis
 from infrastructure.auth.access_service import PasswordAuthService
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.auth.password_hasher import SimplePasswordHasher
+from infrastructure.cache.base import ICacheWeatherService
+from infrastructure.cache.config import CacheConfig
+from infrastructure.cache.redis import (
+    init_redis,
+    RedisCacheWeatherService,
+)
 from infrastructure.database.config import DBConfig
 from infrastructure.database.init import init_database
 from infrastructure.jwt.base import BaseJWTProcessor
@@ -52,10 +59,7 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    jwt_config: JWTConfig = JWTConfig(
-        config.JWT_SECRET_KEY,
-        config.JWT_ALGORITHM,
-    )
+    jwt_config: JWTConfig = JWTConfig()
 
     container.register(
         JWTConfig,
@@ -118,7 +122,8 @@ def _init_container() -> Container:
     )
 
     weather_api_config: WeatherAPIConfig = WeatherAPIConfig(
-        config.WEATHER_API_KEY, config.WEATHER_API_URL,
+        config.WEATHER_API_KEY,
+        config.WEATHER_API_URL,
     )
 
     container.register(
@@ -130,6 +135,20 @@ def _init_container() -> Container:
     container.register(
         IWeatherAPIService,
         OpenWeatherAPIService,
+        scope=Scope.singleton,
+    )
+
+    cache_config: CacheConfig = CacheConfig()
+
+    container.register(
+        Redis,
+        factory=partial(init_redis, cache_config=cache_config),
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        ICacheWeatherService,
+        RedisCacheWeatherService,
         scope=Scope.singleton,
     )
 

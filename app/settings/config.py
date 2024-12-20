@@ -20,5 +20,8 @@ class Settings(BaseSettings):
     WEATHER_API_KEY: str
     WEATHER_API_URL: str
 
+    CACHE_HOST: str
+    CACHE_PORT: str
+
 
 config = Settings()
