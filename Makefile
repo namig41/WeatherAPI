@@ -2,7 +2,7 @@ DC = docker compose
 SERVICE_NAME = main-app
 APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
-REDIS_FILE = docker_compose/redis.yaml
+CACHE_FILE = docker_compose/cache.yaml
 
 .PHONY: app
 app-start:
@@ -42,15 +42,15 @@ storage-drop:
 storage-rebuild:
 	${DC} -f ${STORAGE_FILE} build --no-cache
 
-# === Redis Section ===
-.PHONY: redis-start
-redis-start:
-	${DC} -f ${REDIS_FILE} up -d
+# === cache Section ===
+.PHONY: cache-start
+cache-start:
+	${DC} -f ${CACHE_FILE} up -d
 
-.PHONY: redis-drop
-redis-drop:
-	${DC} -f ${REDIS_FILE} down
+.PHONY: cache-drop
+cache-drop:
+	${DC} -f ${CACHE_FILE} down
 
-.PHONY: redis-remove
-redis-rebuild:
-	${DC} -f ${REDIS_FILE} build --no-cache
+.PHONY: cache-remove
+cache-rebuild:
+	${DC} -f ${CACHE_FILE} build --no-cache

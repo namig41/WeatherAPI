@@ -28,6 +28,7 @@ psycopg2 = "^2.9.10"
 asyncpg = "^0.30.0"
 httpx = "^0.28.1"
 aioredis = "^2.0.1"
+celery = {extras = ["redis"], version = "^5.4.0"}
 
 
 [build-system]

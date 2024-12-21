@@ -5,6 +5,7 @@ from fastapi import (
     status,
 )
 
+from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.repository.base import BaseLocationRepository
 from infrastructure.weather.base import IWeatherAPIService
 from punq import Container
@@ -34,15 +35,27 @@ async def get_weather_by_name(
             BaseLocationRepository,
         )
         weather_service: IWeatherAPIService = container.resolve(IWeatherAPIService)
+
+        cache_service: ICacheWeatherService = container.resolve(ICacheWeatherService)
+
         location: Location = await location_repository.get_location_by_name(
             location_name,
         )
-        weather_data: Weather = await weather_service.get_weather_by_location_name(
+
+        weather: Weather | None = await cache_service.get_weather_by_location_name(location)
+
+        if weather is not None:
+            return WeatherResponseSchema.from_entity(weather)
+
+        weather = await weather_service.get_weather_by_location_name(
             location,
         )
+
+        await cache_service.set_weather_by_location_name(location, weather)
+
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": exception.message},
         )
-    return WeatherResponseSchema.from_entity(weather_data)
+    return WeatherResponseSchema.from_entity(weather)

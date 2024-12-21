@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import lru_cache
 
 import aioredis
 from aioredis import Redis
@@ -30,6 +29,5 @@ class RedisCacheWeatherService(ICacheWeatherService):
         await self.redis.set(location.name, weather_bytes, expire)
 
 
-@lru_cache(1)
 def init_redis(cache_config: CacheConfig) -> Redis:
     return aioredis.from_url(cache_config.get_url("redis"))

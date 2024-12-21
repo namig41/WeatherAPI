@@ -8,5 +8,5 @@ class CacheConfig:
     host: str = config.CACHE_HOST
     port: str = config.CACHE_PORT
 
-    def get_url(self, service_name: str) -> str:
-        return f"{service_name}://{self.host}:{self.port}"
+    def get_url(self, schema: str) -> str:
+        return f"{schema}://{self.host}:{self.port}"

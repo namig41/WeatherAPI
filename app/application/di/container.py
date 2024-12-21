@@ -73,17 +73,9 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    db_config: DBConfig = DBConfig()
-
-    container.register(
-        DBConfig,
-        isinstance=db_config,
-        scope=Scope.singleton,
-    )
-
     container.register(
         AsyncEngine,
-        factory=partial(init_database, db_config=db_config),
+        factory=partial(init_database, db_config=DBConfig()),
         scope=Scope.singleton,
     )
 
@@ -121,14 +113,9 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    weather_api_config: WeatherAPIConfig = WeatherAPIConfig(
-        config.WEATHER_API_KEY,
-        config.WEATHER_API_URL,
-    )
-
     container.register(
         WeatherAPIConfig,
-        instance=weather_api_config,
+        instance=WeatherAPIConfig(),
         scope=Scope.singleton,
     )
 
@@ -138,11 +125,9 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    cache_config: CacheConfig = CacheConfig()
-
     container.register(
         Redis,
-        factory=partial(init_redis, cache_config=cache_config),
+        factory=partial(init_redis, cache_config=CacheConfig()),
         scope=Scope.singleton,
     )
 
