@@ -9,10 +9,13 @@ class ICacheWeatherService(Protocol):
 
     @abstractmethod
     async def get_weather_by_location_name(
-        self, location: Location,
+        self,
+        location: Location,
     ) -> Weather | None: ...
 
     @abstractmethod
     async def set_weather_by_location_name(
-        self, location: Location, weather: Weather,
+        self,
+        location: Location,
+        weather: Weather,
     ) -> None: ...

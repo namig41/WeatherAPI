@@ -42,7 +42,9 @@ async def get_weather_by_name(
             location_name,
         )
 
-        weather: Weather | None = await cache_service.get_weather_by_location_name(location)
+        weather: Weather | None = await cache_service.get_weather_by_location_name(
+            location,
+        )
 
         if weather is not None:
             return WeatherResponseSchema.from_entity(weather)

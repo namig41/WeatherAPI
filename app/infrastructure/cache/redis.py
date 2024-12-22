@@ -23,7 +23,10 @@ class RedisCacheWeatherService(ICacheWeatherService):
         return None
 
     async def set_weather_by_location_name(
-        self, location: Location, weather: Weather, expire: int = 3600,
+        self,
+        location: Location,
+        weather: Weather,
+        expire: int = 3600,
     ) -> None:
         weather_bytes: str = convert_weather_entity_to_bytes(weather)
         await self.redis.set(location.name, weather_bytes, expire)
