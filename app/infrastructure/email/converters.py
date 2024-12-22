@@ -16,7 +16,7 @@ def convert_weather_entity_to_message(
     message: EmailMessage = EmailMessage()
 
     message["From"] = config.email_from
-    message["To"] = user.email.as_type_value()
+    message["To"] = user.email.to_raw()
     message["Subject"] = config.subject
 
     message.set_content(

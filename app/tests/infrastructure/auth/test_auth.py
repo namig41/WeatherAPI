@@ -8,6 +8,7 @@ from domain.entities.user import User
 from domain.interfaces.infrastructure.access_service import IAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
+from domain.value_objects.user_email import UserEmail
 
 
 @pytest.mark.asyncio
@@ -19,6 +20,7 @@ async def test_authorize_service(faker: Faker, container: Container):
     raw_password: RawPassword = RawPassword(faker.password())
     user: User = User.create_with_raw_password(
         faker.name_male(),
+        UserEmail(faker.email()),
         raw_password,
         password_hasher,
     )

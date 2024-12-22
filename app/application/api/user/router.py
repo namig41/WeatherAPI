@@ -20,6 +20,7 @@ from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
+from domain.value_objects.user_email import UserEmail
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -81,6 +82,7 @@ async def add_user(
         hasher_password: IPasswordHasher = container.resolve(IPasswordHasher)
         user: User = User.create_with_raw_password(
             user_data.login,
+            UserEmail(user_data.email),
             RawPassword(user_data.password),
             hasher_password,
         )

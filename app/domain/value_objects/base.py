@@ -23,7 +23,7 @@ class BaseValueObject(ABC, Generic[_T]):
     @abstractmethod
     def validate(self) -> None: ...
 
-    def as_type_value(self) -> _T:
+    def to_raw(self) -> _T:
         return self.value
 
     def __eq__(self, other: object) -> bool:

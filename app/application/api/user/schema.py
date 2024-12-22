@@ -7,11 +7,16 @@ from domain.entities.user import User
 
 class GetUserResponseSchema(BaseModel):
     login: str
+    email: str
     password: str
 
     @classmethod
     def from_entity(cls, user: User) -> "GetUserResponseSchema":
-        return cls(login=user.login, password=user.hashed_password.value)
+        return cls(
+            login=user.login,
+            email=user.email.to_raw(),
+            password=user.hashed_password.to_raw(),
+        )
 
 
 class GetUsersResponseSchema(BaseModel):
@@ -26,4 +31,5 @@ class GetUsersResponseSchema(BaseModel):
 
 class AddNewUserRequestSchema(BaseModel):
     login: str
+    email: str
     password: str

@@ -1,8 +1,9 @@
-from typing import Any
-
+from infrastructure.database.custom_types import (
+    HashedPasswordType,
+    UserEmailType,
+)
 from sqlalchemy import (
     Column,
-    Dialect,
     Float,
     ForeignKey,
     Integer,
@@ -11,28 +12,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.orm import registry
-from sqlalchemy.types import TypeDecorator
 
 from domain.entities.location import Location
 from domain.entities.user import User
-from domain.value_objects.hashed_password import HashedPassword
-
-
-class HashedPasswordType(TypeDecorator):
-    impl = String
-
-    def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any | None:
-        if value is not None:
-            return value.value
-        return None
-
-    def process_result_value(self, value: Any | None, dialect: Dialect) -> Any | None:
-        if value is not None:
-            return HashedPassword(value)
-        return None
-
-    def copy(self, **kwargs: Any) -> "HashedPasswordType":
-        return self.__class__()
 
 
 mapper_registry = registry()
@@ -43,6 +25,7 @@ users = Table(
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("login", String(255)),
+    Column("email", UserEmailType),
     Column("hashed_password", HashedPasswordType),
 )
 

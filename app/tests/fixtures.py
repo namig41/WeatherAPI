@@ -19,6 +19,7 @@ from application.di.container import _init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.value_objects.hashed_password import HashedPassword
+from domain.value_objects.user_email import UserEmail
 
 
 def init_dummy_container() -> Container:
@@ -43,8 +44,9 @@ def get_user() -> Generator[User, None, None]:
 
     while True:
         login: str = faker.name()
+        email: str = faker.email()
         password: str = faker.password()
-        yield User(login, HashedPassword(password))
+        yield User(login, UserEmail(email), HashedPassword(password))
 
 
 def get_location() -> Generator[Location, None, None]:
