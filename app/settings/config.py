@@ -23,5 +23,10 @@ class Settings(BaseSettings):
     CACHE_HOST: str
     CACHE_PORT: str
 
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
+
 
 config = Settings()

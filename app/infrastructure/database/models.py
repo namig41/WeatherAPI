@@ -40,7 +40,7 @@ locations = Table(
 )
 
 
-def start_mappers() -> None:
+def start_entity_mappers() -> None:
     mapper_registry.map_imperatively(User, users)
     mapper_registry.map_imperatively(Location, locations)
 

@@ -4,6 +4,7 @@ from functools import (
 )
 
 from aioredis import Redis
+from aiosmtplib import SMTP
 from infrastructure.auth.access_service import PasswordAuthService
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.auth.password_hasher import SimplePasswordHasher
@@ -15,6 +16,10 @@ from infrastructure.cache.redis import (
 )
 from infrastructure.database.config import DBConfig
 from infrastructure.database.init import init_database
+from infrastructure.email.base import IEmailClientService
+from infrastructure.email.config import SMTPConfig
+from infrastructure.email.email_client import AioSMTPEmailClient
+from infrastructure.email.init import init_smtp_client
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
@@ -134,6 +139,23 @@ def _init_container() -> Container:
     container.register(
         ICacheWeatherService,
         RedisCacheWeatherService,
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        SMTPConfig,
+        instance=SMTPConfig(),
+        scope=Scope.singleton,
+    )
+    container.register(
+        SMTP,
+        factory=partial(init_smtp_client, smtp_config=SMTPConfig()),
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        IEmailClientService,
+        AioSMTPEmailClient,
         scope=Scope.singleton,
     )
 

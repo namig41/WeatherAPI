@@ -2,7 +2,7 @@ from random import SystemRandom
 
 import pytest
 from faker import Faker
-from infrastructure.database.models import start_mappers
+from infrastructure.database.models import start_entity_mappers
 from punq import Container
 
 from tests.fixtures import init_dummy_container
@@ -15,7 +15,7 @@ def container() -> Container:
 
 @pytest.fixture(scope="session")
 def faker() -> Faker:
-    faker_instance = Faker()
+    faker_instance: Faker = Faker()
     return faker_instance
 
 
@@ -24,4 +24,4 @@ def setup_before_all_tests(faker: Faker) -> None:
     random_seed: int = SystemRandom().randint(0, 9999)
     faker.seed_instance(random_seed)
 
-    start_mappers()
+    start_entity_mappers()

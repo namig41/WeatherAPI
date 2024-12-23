@@ -19,7 +19,7 @@ services:
       context: ..
       dockerfile: Dockerfile
     command: >
-      celery -A application.tasks worker --loglevel=info
+      celery -A infrastructure.task_queue.init worker --loglevel=info
     depends_on:
       - redis
     env_file:

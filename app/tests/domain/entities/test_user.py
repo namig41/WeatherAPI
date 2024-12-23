@@ -13,7 +13,10 @@ def test_user_entity(container: Container, faker: Faker) -> None:
     raw_password: RawPassword = RawPassword(faker.password())
     password_hasher: IPasswordHasher = container.resolve(IPasswordHasher)
     user: User = User.create_with_raw_password(
-        login, email, raw_password, password_hasher,
+        login,
+        email,
+        raw_password,
+        password_hasher,
     )
 
     assert user.login == login

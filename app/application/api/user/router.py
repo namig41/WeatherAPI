@@ -8,6 +8,7 @@ from fastapi import (
 )
 
 from infrastructure.repository.base import BaseUserRepository
+from infrastructure.task_queue.user_tasks import user_register_send_email_task
 from punq import Container
 
 from application.api.user.schema import (
@@ -87,6 +88,7 @@ async def add_user(
             hasher_password,
         )
         await users_repository.add_user(user)
+        await user_register_send_email_task(user)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

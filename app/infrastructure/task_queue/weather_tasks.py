@@ -1,4 +1,4 @@
-from infrastructure.task_queue.init import app
+from infrastructure.task_queue.init import celery
 from infrastructure.weather.base import IWeatherAPIService
 
 from domain.entities.location import Location
@@ -6,7 +6,7 @@ from domain.entities.weather import Weather
 from domain.exceptions.base import ApplicationException
 
 
-@app.task
+@celery.task
 async def fetch_weather_from_api(
     weather_api_service: IWeatherAPIService,
     location: Location,

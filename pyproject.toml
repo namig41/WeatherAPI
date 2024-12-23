@@ -31,6 +31,7 @@ aioredis = "^2.0.1"
 celery = {extras = ["redis"], version = "^5.4.0"}
 aiosmtplib = "^3.0.2"
 email-validator = "^2.2.0"
+qredis = "^1.1.0"
 
 
 [build-system]

@@ -1,19 +1,19 @@
 from dataclasses import dataclass
 
+from settings.config import config
+
 
 @dataclass
 class SMTPConfig:
-    user: str
-    password: str
-    port: int
-    host: str
-    use_tls: bool
+    username: str = config.SMTP_USERNAME
+    password: str = config.SMTP_PASSWORD
+    port: int = config.SMTP_PORT
+    host: str = config.SMTP_HOST
+    use_tls: bool = True
 
 
 @dataclass
 class ConfirmationEmailConfig:
-    subject: str
-    confirmation_link: str
     email_from: str
-    template_path: str
-    template_name: str
+    subject: str
+    company_name: str
