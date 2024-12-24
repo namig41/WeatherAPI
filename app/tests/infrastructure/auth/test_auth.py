@@ -5,7 +5,7 @@ from infrastructure.repository.base import BaseUserRepository
 from punq import Container
 
 from domain.entities.user import User
-from domain.interfaces.infrastructure.access_service import IAccessService
+from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
@@ -13,7 +13,7 @@ from domain.value_objects.user_email import UserEmail
 
 @pytest.mark.asyncio
 async def test_authorize_service(faker: Faker, container: Container):
-    access_service: IAccessService = container.resolve(IAccessService)
+    access_service: IAuthAccessService = container.resolve(IAuthAccessService)
     password_hasher: IPasswordHasher = container.resolve(IPasswordHasher)
     users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
 

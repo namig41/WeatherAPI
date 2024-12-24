@@ -21,7 +21,8 @@ async def user_register_send_email_task(
         container: Container = init_container()
         smtp_config: SMTPConfig = container.resolve(SMTPConfig)
         user_register_message: EmailMessage = convert_user_register_to_email_message(
-            user, smtp_config,
+            user,
+            smtp_config,
         )
         await email_service.send(user_register_message)
     except ApplicationException:
@@ -36,7 +37,8 @@ async def user_auth_send_email_task(
         email_service: IEmailClientService = container.resolve(IEmailClientService)
         smtp_config: SMTPConfig = container.resolve(SMTPConfig)
         user_register_message: EmailMessage = convert_user_auth_to_email_message(
-            user, smtp_config,
+            user,
+            smtp_config,
         )
         await email_service.send(user_register_message)
     except ApplicationException:

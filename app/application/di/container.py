@@ -42,7 +42,7 @@ from punq import (
 )
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
-from domain.interfaces.infrastructure.access_service import IAccessService
+from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from settings.config import (
     config,
@@ -102,7 +102,7 @@ def _init_container() -> Container:
     )
 
     container.register(
-        IAccessService,
+        IAuthAccessService,
         PasswordAuthService,
         scope=Scope.singleton,
     )

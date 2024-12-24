@@ -7,8 +7,13 @@ from fastapi import (
     status,
 )
 
+from infrastructure.email.base import IEmailClientService
+from infrastructure.email.email_config_factory import (
+    ConfirmationEmailConfigFactory,
+    EmailMessageType,
+)
+from infrastructure.email.services.user import send_user_registration_email
 from infrastructure.repository.base import BaseUserRepository
-from infrastructure.task_queue.user_tasks import user_register_send_email_task
 from punq import Container
 
 from application.api.user.schema import (
@@ -88,7 +93,13 @@ async def add_user(
             hasher_password,
         )
         await users_repository.add_user(user)
-        await user_register_send_email_task(user)
+
+        email_service: IEmailClientService = container.resolve(IEmailClientService)
+        await send_user_registration_email(
+            user,
+            ConfirmationEmailConfigFactory.create(EmailMessageType.REGISTRATION),
+            email_service,
+        )
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

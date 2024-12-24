@@ -5,13 +5,13 @@ from infrastructure.repository.base import BaseUserRepository
 
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from domain.interfaces.infrastructure.access_service import IAccessService
+from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 
 
 @dataclass
-class PasswordAuthService(IAccessService):
+class PasswordAuthService(IAuthAccessService):
     users_repository: BaseUserRepository
     password_hasher: IPasswordHasher
 
