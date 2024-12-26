@@ -17,13 +17,15 @@ from domain.entities.location import Location
 from domain.entities.user import User
 from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
+from settings.config import Settings
 
 
 def init_dummy_container() -> Container:
     container: Container = _init_container()
+    config: Settings = container.resolve(Settings)
 
     db_config: DBConfig = DBConfig()
-    db_config.DB_NAME = "test_weather"
+    db_config.DB_NAME = config.POSTGRES_TEST_DB
 
     container.register(
         AsyncEngine,

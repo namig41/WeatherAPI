@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
+    POSTGRES_TEST_DB: str
     POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: str
