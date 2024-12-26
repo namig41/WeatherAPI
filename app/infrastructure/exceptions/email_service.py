@@ -8,3 +8,10 @@ class EmailConnectionFailedException(InfraException):
     @property
     def message(self):
         return "Ошибка подключения к почте"
+
+
+@dataclass(eq=False)
+class EmailNotFoundException(InfraException):
+    @property
+    def message(self):
+        return "Почта не найдена"

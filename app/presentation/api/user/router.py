@@ -14,13 +14,13 @@ from infrastructure.email.email_config_factory import (
 )
 from infrastructure.email.services.user import send_user_registration_email
 from infrastructure.repository.base import BaseUserRepository
-from punq import Container
-
-from application.api.user.schema import (
+from presentation.api.user.schema import (
     AddNewUserRequestSchema,
     GetUserResponseSchema,
     GetUsersResponseSchema,
 )
+from punq import Container
+
 from application.di.container import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
@@ -53,7 +53,7 @@ async def get_all_user(
 
 
 @router.get(
-    "/{name}",
+    "/{login}",
     status_code=status.HTTP_200_OK,
     response_model=GetUserResponseSchema,
     description="Получение пользователя по логину",
@@ -93,7 +93,6 @@ async def add_user(
             hasher_password,
         )
         await users_repository.add_user(user)
-
         email_service: IEmailClientService = container.resolve(IEmailClientService)
         await send_user_registration_email(
             user,

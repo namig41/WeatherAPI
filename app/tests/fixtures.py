@@ -1,20 +1,16 @@
 from decimal import Decimal
+from functools import partial
 from typing import Generator
 
 from faker import Faker
 from infrastructure.auth.password_hasher import SHA256PasswordHasher
-from infrastructure.repository.base import (
-    BaseLocationRepository,
-    BaseUserRepository,
-)
-from infrastructure.repository.postgres import (
-    PostgreSQLLocationRepository,
-    PostgreSQLUserRepository,
-)
+from infrastructure.database.config import DBConfig
+from infrastructure.database.init import init_database
 from punq import (
     Container,
     Scope,
 )
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from application.di.container import _init_container
 from domain.entities.location import Location
@@ -26,14 +22,12 @@ from domain.value_objects.user_email import UserEmail
 def init_dummy_container() -> Container:
     container: Container = _init_container()
 
+    db_config: DBConfig = DBConfig()
+    db_config.DB_NAME = "test_weather"
+
     container.register(
-        BaseUserRepository,
-        PostgreSQLUserRepository,
-        scope=Scope.singleton,
-    )
-    container.register(
-        BaseLocationRepository,
-        PostgreSQLLocationRepository,
+        AsyncEngine,
+        factory=partial(init_database, db_config=db_config),
         scope=Scope.singleton,
     )
 

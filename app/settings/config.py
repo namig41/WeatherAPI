@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     PYTHONPATH: str
+
+    API_HOST: str
     API_PORT: str
 
     POSTGRES_USER: str

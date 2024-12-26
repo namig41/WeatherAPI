@@ -8,9 +8,9 @@ from fastapi import (
 from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.repository.base import BaseLocationRepository
 from infrastructure.weather.base import IWeatherAPIService
+from presentation.api.weather.schema import WeatherResponseSchema
 from punq import Container
 
-from application.api.weather.schema import WeatherResponseSchema
 from application.di.container import init_container
 from domain.entities.location import Location
 from domain.entities.weather import Weather

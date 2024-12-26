@@ -31,3 +31,5 @@ async def test_authorize_service(faker: Faker, container: Container):
     fake_raw_password: RawPassword = RawPassword(faker.password())
     with pytest.raises(UserAuthFailedException):
         await access_service.authorize(user.login, fake_raw_password)
+
+    await users_repository.delete_user_by_login(user.login)

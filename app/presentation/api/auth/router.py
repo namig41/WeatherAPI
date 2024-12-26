@@ -21,12 +21,12 @@ from infrastructure.jwt.access_token import (
 )
 from infrastructure.jwt.base import JWTToken
 from infrastructure.repository.base import BaseUserRepository
-from punq import Container
-
-from application.api.auth.schema import (
+from presentation.api.auth.schema import (
     GetMeResponseSchema,
     LoginUserRequestSchema,
 )
+from punq import Container
+
 from application.di.container import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException

@@ -1,5 +1,6 @@
 from email.message import EmailMessage
 
+from aiosmtplib import SMTPSenderRefused
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.config import ConfirmationEmailConfig
 
@@ -27,8 +28,10 @@ async def send_user_registration_email(
         )
 
         await email_service.send(message)
-    except ApplicationException:
-        raise
+    except Exception as exception:
+        raise exception
+    except SMTPSenderRefused:
+        raise ApplicationException
 
 
 async def send_user_authorization_email(

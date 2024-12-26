@@ -20,4 +20,4 @@ def test_user_entity(container: Container, faker: Faker) -> None:
     )
 
     assert user.login == login
-    assert user.hashed_password == password_hasher.hash_password(raw_password)
+    assert password_hasher.verify_password(raw_password, user.hashed_password)

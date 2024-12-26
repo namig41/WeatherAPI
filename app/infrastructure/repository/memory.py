@@ -9,10 +9,7 @@ from infrastructure.exceptions.repository import (
     LocationNotFoundException,
     UserNotFoundException,
 )
-from infrastructure.repository.base import (
-    BaseLocationRepository,
-    BaseUserRepository,
-)
+from infrastructure.repository.base import BaseUserRepository
 
 from domain.entities.location import Location
 from domain.entities.user import User
@@ -49,16 +46,16 @@ class MemoryUserRepository(BaseUserRepository):
 
 
 @dataclass
-class MemoryLocationRepository(BaseLocationRepository):
+class MemoryLocationRepository(BaseUserRepository):
 
-    _locations: set[Location] = field(
+    _locations: set[User] = field(
         default_factory=set,
     )
 
     async def add_location(self, location: Location) -> None:
         self._locations.add(location)
 
-    async def get_location_by_name(self, name: str) -> Location:
+    async def get_user_by_name(self, name: str) -> User:
         try:
             return next(
                 location for location in self._locations if location.name == name
@@ -66,12 +63,12 @@ class MemoryLocationRepository(BaseLocationRepository):
         except StopIteration:
             raise LocationNotFoundException()
 
-    async def get_all_location(self) -> Iterable[Location]:
+    async def get_all_location(self) -> Iterable[User]:
         return self._locations
 
     async def delete_location_by_name(self, name: str) -> None:
         try:
-            location = await self.get_location_by_name(name)
+            location = await self.get_user_by_name(name)
             self._locations.remove(location)
         except InfraException:
             raise

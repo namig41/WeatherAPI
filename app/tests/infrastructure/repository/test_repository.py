@@ -49,3 +49,5 @@ async def test_location_repository(container: Container):
 
     with pytest.raises(LocationNotFoundException):
         await location_repository.get_location_by_name(location_1.name)
+
+    await location_repository.delete_location_by_name(location_2.name)

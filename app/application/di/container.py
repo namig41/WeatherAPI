@@ -7,7 +7,7 @@ from aioredis import Redis
 from aiosmtplib import SMTP
 from infrastructure.auth.access_service import PasswordAuthService
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
-from infrastructure.auth.password_hasher import SimplePasswordHasher
+from infrastructure.auth.password_hasher import SHA256PasswordHasher
 from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.cache.config import CacheConfig
 from infrastructure.cache.redis import (
@@ -97,7 +97,7 @@ def _init_container() -> Container:
 
     container.register(
         IPasswordHasher,
-        SimplePasswordHasher,
+        SHA256PasswordHasher,
         scope=Scope.singleton,
     )
 
