@@ -16,6 +16,9 @@ class BaseUserRepository(ABC):
     async def add_user(self, user: User) -> None: ...
 
     @abstractmethod
+    async def user_exists(self, login: str) -> None: ...
+
+    @abstractmethod
     async def get_user_by_login(self, login: str) -> User: ...
 
     @abstractmethod

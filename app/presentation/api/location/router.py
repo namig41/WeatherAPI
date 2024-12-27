@@ -52,7 +52,7 @@ async def get_all_location(
     description="Получение локации по имени",
 )
 async def get_location(
-    location_name: str,
+    name: str,
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
@@ -60,7 +60,7 @@ async def get_location(
             BaseLocationRepository,
         )
         location: Location = await location_repository.get_location_by_name(
-            name=location_name,
+            name=name,
         )
     except ApplicationException as exception:
         raise HTTPException(

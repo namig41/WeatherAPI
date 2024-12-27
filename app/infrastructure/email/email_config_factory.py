@@ -1,27 +1,35 @@
-from enum import Enum
+from dataclasses import dataclass
+from enum import (
+    auto,
+    Enum,
+)
 
-from infrastructure.email.config import ConfirmationEmailConfig
+from infrastructure.email.config import (
+    ConfirmationEmailConfig,
+    SMTPConfig,
+)
 
 
 class EmailMessageType(Enum):
-    REGISTRATION = "registration"
-    AUTHORIZATION = "authorization"
+    REGISTRATION = auto()
+    AUTHORIZATION = auto()
 
 
+@dataclass
 class ConfirmationEmailConfigFactory:
-    @staticmethod
-    def create(message_type: EmailMessageType) -> ConfirmationEmailConfig:
+
+    config: SMTPConfig
+
+    def create(self, message_type: EmailMessageType) -> ConfirmationEmailConfig:
         if message_type == EmailMessageType.REGISTRATION:
             return ConfirmationEmailConfig(
-                email_from="namigguseynov@yandex.ru",
+                email_from=self.config.username,
                 subject="Добро пожаловать на наш сервис!",
                 company_name="WeatherAPI",
             )
         elif message_type == EmailMessageType.AUTHORIZATION:
             return ConfirmationEmailConfig(
-                email_from="namigguseynov@yandex.ru",
+                email_from=self.config.username,
                 subject="Авторизация пользователя",
                 company_name="WeatherAPI",
             )
-        else:
-            raise ValueError(f"Unknown message type: {message_type}")

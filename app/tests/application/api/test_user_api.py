@@ -29,11 +29,11 @@ async def test_api_get_users_request(
 
 @pytest.mark.asyncio
 async def test_api_get_user_request(
-    test_uesr_data: dict,
+    test_user_data: dict,
     users_prefix: str,
     client: TestClient,
     base_url: str,
 ):
-    user_login: str = test_uesr_data["login"]
+    user_login: str = test_user_data["login"]
     response: Response = client.get(f"{base_url}/{users_prefix}/{user_login}")
     assert response.is_success

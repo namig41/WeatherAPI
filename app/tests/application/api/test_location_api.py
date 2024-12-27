@@ -12,7 +12,8 @@ async def test_api_add_location_request(
     base_url: str,
 ):
     response: Response = client.post(
-        f"{base_url}/{locations_prefix}", json=test_location_data,
+        f"{base_url}/{locations_prefix}",
+        json=test_location_data,
     )
 
     assert response.is_success

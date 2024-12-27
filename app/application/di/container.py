@@ -19,6 +19,7 @@ from infrastructure.database.init import init_database
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.config import SMTPConfig
 from infrastructure.email.email_client import AioSMTPEmailClient
+from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.email.init import init_smtp_client
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.config import JWTConfig
@@ -142,14 +143,22 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
+    smtp_config: SMTPConfig = SMTPConfig()
+
     container.register(
         SMTPConfig,
-        instance=SMTPConfig(),
+        instance=smtp_config,
         scope=Scope.singleton,
     )
+
+    container.register(
+        ConfirmationEmailConfigFactory,
+        scope=Scope.singleton,
+    )
+
     container.register(
         SMTP,
-        factory=partial(init_smtp_client, smtp_config=SMTPConfig()),
+        factory=partial(init_smtp_client, smtp_config=smtp_config),
         scope=Scope.singleton,
     )
 

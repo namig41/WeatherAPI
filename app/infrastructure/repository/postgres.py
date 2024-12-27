@@ -3,6 +3,7 @@ from typing import Iterable
 
 from infrastructure.exceptions.repository import (
     LocationNotFoundException,
+    UserExistsException,
     UserNotFoundException,
 )
 from infrastructure.repository.base import (
@@ -30,6 +31,13 @@ class PostgreSQLUserRepository(BaseUserRepository):
             session.add(user)
             await session.commit()
 
+    async def user_exists(self, login: str) -> None:
+        async with AsyncSession(self.engine, expire_on_commit=False) as session:
+            query = select(User).where(User.login == login)
+            result = await session.execute(query)
+            if result.scalar_one_or_none() is not None:
+                raise UserExistsException(login)
+
     async def get_user_by_login(self, login: str) -> User:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
             query = select(User).where(User.login == login)
@@ -37,7 +45,7 @@ class PostgreSQLUserRepository(BaseUserRepository):
             user: User | None = result.scalar_one_or_none()
 
             if not user:
-                raise UserNotFoundException()
+                raise UserNotFoundException(login)
 
             return user
 

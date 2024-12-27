@@ -86,6 +86,8 @@ async def add_user(
     try:
         users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
         hasher_password: IPasswordHasher = container.resolve(IPasswordHasher)
+
+        await users_repository.user_exists(user_data.login)
         user: User = User.create_with_raw_password(
             user_data.login,
             UserEmail(user_data.email),
@@ -94,9 +96,12 @@ async def add_user(
         )
         await users_repository.add_user(user)
         email_service: IEmailClientService = container.resolve(IEmailClientService)
+        confirmation_email_config: ConfirmationEmailConfigFactory = container.resolve(
+            ConfirmationEmailConfigFactory,
+        )
         await send_user_registration_email(
             user,
-            ConfirmationEmailConfigFactory.create(EmailMessageType.REGISTRATION),
+            confirmation_email_config.create(EmailMessageType.REGISTRATION),
             email_service,
         )
     except ApplicationException as exception:

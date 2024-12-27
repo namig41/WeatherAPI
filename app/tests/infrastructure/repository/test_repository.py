@@ -1,6 +1,7 @@
 import pytest
 from infrastructure.exceptions.repository import (
     LocationNotFoundException,
+    UserExistsException,
     UserNotFoundException,
 )
 from infrastructure.repository.base import (
@@ -30,6 +31,9 @@ async def test_users_repository(container: Container):
 
     with pytest.raises(UserNotFoundException):
         await users_repository.get_user_by_login(user_1.login)
+
+    with pytest.raises(UserExistsException):
+        await users_repository.user_exists(user_2.login)
 
 
 @pytest.mark.asyncio

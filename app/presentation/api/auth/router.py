@@ -70,9 +70,12 @@ async def login_user(
         # TODO: Лишний запрос в базу данных. Возможно стоит добавить email в jwt
         user: User = await users_repository.get_user_by_login(user_data.login)
         email_service: IEmailClientService = container.resolve(IEmailClientService)
+        confirmation_email_config: ConfirmationEmailConfigFactory = container.resolve(
+            ConfirmationEmailConfigFactory,
+        )
         await send_user_authorization_email(
             user,
-            ConfirmationEmailConfigFactory.create(EmailMessageType.AUTHORIZATION),
+            confirmation_email_config.create(EmailMessageType.AUTHORIZATION),
             email_service,
         )
     except ApplicationException as exception:
