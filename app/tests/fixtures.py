@@ -2,6 +2,7 @@ from decimal import Decimal
 from functools import partial
 from typing import Generator
 
+from bootstrap.di import _init_container
 from faker import Faker
 from infrastructure.auth.password_hasher import SHA256PasswordHasher
 from infrastructure.database.config import DBConfig
@@ -12,7 +13,6 @@ from punq import (
 )
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from application.di.container import _init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.value_objects.raw_password import RawPassword

@@ -1,5 +1,6 @@
 from email.message import EmailMessage
 
+from bootstrap.di import init_container
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.config import SMTPConfig
 from infrastructure.email.converters import (
@@ -8,7 +9,6 @@ from infrastructure.email.converters import (
 )
 from punq import Container
 
-from application.di.container import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 

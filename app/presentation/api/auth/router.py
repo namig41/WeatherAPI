@@ -8,30 +8,17 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse
 
-from infrastructure.auth.access_token_processor import AccessTokenProcessor
-from infrastructure.email.base import IEmailClientService
-from infrastructure.email.email_config_factory import (
-    ConfirmationEmailConfigFactory,
-    EmailMessageType,
-)
-from infrastructure.email.services.user import send_user_authorization_email
-from infrastructure.jwt.access_token import (
-    AccessToken,
-    JWTPayload,
-)
-from infrastructure.jwt.base import JWTToken
-from infrastructure.repository.base import BaseUserRepository
+from bootstrap.di import init_container
+from infrastructure.jwt.access_token import JWTToken
 from presentation.api.auth.schema import (
     GetMeResponseSchema,
     LoginUserRequestSchema,
 )
 from punq import Container
 
-from application.di.container import init_container
+from application.common.interactor import Interactor
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from domain.interfaces.infrastructure.access_service import IAuthAccessService
-from domain.value_objects.raw_password import RawPassword
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -48,43 +35,27 @@ async def login_user(
     container: Container = Depends(init_container),
 ) -> JSONResponse:
     try:
-        auth_access_service: IAuthAccessService = container.resolve(IAuthAccessService)
-        access_token_processor: AccessTokenProcessor = container.resolve(
-            AccessTokenProcessor,
+        login_user_action: Interactor[LoginUserRequestSchema, JWTToken] = (
+            container.resolve(
+                Interactor[LoginUserRequestSchema, JWTToken],
+            )
         )
-        await auth_access_service.authorize(
-            user_data.login,
-            RawPassword(user_data.password),
-        )
-        # TODO: Придумать более гибкое формирование полезной нагрузки jwt
-        payload: JWTPayload = JWTPayload.from_dict(
-            {"login": user_data.login},
-        )
-        access_token: AccessToken = AccessToken.create_with_expiration(payload)
-        jwt_token: JWTToken = access_token_processor.encode(access_token)
+
+        jwt_token: JWTToken = await login_user_action(user_data)
+
         response.set_cookie(
             key="access_token",
             value=jwt_token,
             samesite="lax",
             secure=False,
         )
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        # TODO: Лишний запрос в базу данных. Возможно стоит добавить email в jwt
-        user: User = await users_repository.get_user_by_login(user_data.login)
-        email_service: IEmailClientService = container.resolve(IEmailClientService)
-        confirmation_email_config: ConfirmationEmailConfigFactory = container.resolve(
-            ConfirmationEmailConfigFactory,
-        )
-        await send_user_authorization_email(
-            user,
-            confirmation_email_config.create(EmailMessageType.AUTHORIZATION),
-            email_service,
-        )
+
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": exception.message},
         )
+
     return JSONResponse(content={"access_token": jwt_token})
 
 
@@ -109,14 +80,12 @@ async def me(
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        access_token_processor: AccessTokenProcessor = container.resolve(
-            AccessTokenProcessor,
+        me_user_action: Interactor[JWTToken, User] = container.resolve(
+            Interactor[JWTToken, User],
         )
-        access_token: AccessToken = access_token_processor.decode(jwt_token)
-        user: User = await users_repository.get_user_by_login(
-            login=access_token.payload.login,
-        )
+
+        user: User = await me_user_action(jwt_token)
+
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

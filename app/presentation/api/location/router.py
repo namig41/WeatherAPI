@@ -7,6 +7,7 @@ from fastapi import (
     status,
 )
 
+from bootstrap.di import init_container
 from infrastructure.repository.base import BaseLocationRepository
 from presentation.api.location.schema import (
     AddNewLocationRequestSchema,
@@ -15,7 +16,6 @@ from presentation.api.location.schema import (
 )
 from punq import Container
 
-from application.di.container import init_container
 from domain.entities.location import Location
 from domain.exceptions.base import ApplicationException
 

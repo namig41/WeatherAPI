@@ -21,6 +21,7 @@ from infrastructure.email.config import SMTPConfig
 from infrastructure.email.email_client import AioSMTPEmailClient
 from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.email.init import init_smtp_client
+from infrastructure.jwt.access_token import JWTToken
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
@@ -37,12 +38,17 @@ from infrastructure.repository.postgres import (
 from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.open_weather_api import OpenWeatherAPIService
+from presentation.api.auth.schema import LoginUserRequestSchema
 from punq import (
     Container,
     Scope,
 )
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
+from application.auth.login_user import LoginUserInteractor
+from application.auth.me_user import MeUserInteractor
+from application.common.interactor import Interactor
+from domain.entities.user import User
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from settings.config import (
@@ -166,6 +172,16 @@ def _init_container() -> Container:
         IEmailClientService,
         AioSMTPEmailClient,
         scope=Scope.singleton,
+    )
+
+    container.register(
+        Interactor[LoginUserRequestSchema, JWTToken],
+        LoginUserInteractor,
+    )
+
+    container.register(
+        Interactor[JWTToken, User],
+        MeUserInteractor,
     )
 
     return container

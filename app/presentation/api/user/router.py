@@ -7,6 +7,7 @@ from fastapi import (
     status,
 )
 
+from bootstrap.di import init_container
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.email_config_factory import (
     ConfirmationEmailConfigFactory,
@@ -21,7 +22,6 @@ from presentation.api.user.schema import (
 )
 from punq import Container
 
-from application.di.container import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
