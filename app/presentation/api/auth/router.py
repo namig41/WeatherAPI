@@ -57,7 +57,9 @@ async def login_user(
             RawPassword(user_data.password),
         )
         # TODO: Придумать более гибкое формирование полезной нагрузки jwt
-        payload: JWTPayload = JWTPayload.from_dict({"login": user_data.login})
+        payload: JWTPayload = JWTPayload.from_dict(
+            {"login": user_data.login},
+        )
         access_token: AccessToken = AccessToken.create_with_expiration(payload)
         jwt_token: JWTToken = access_token_processor.encode(access_token)
         response.set_cookie(

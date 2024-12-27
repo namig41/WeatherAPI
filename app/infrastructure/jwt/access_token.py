@@ -1,4 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import (
+    asdict,
+    dataclass,
+)
 from datetime import (
     datetime,
     timedelta,
@@ -23,15 +26,11 @@ class JWTPayload:
     login: str
 
     def to_dict(self) -> JWTPayloadDict:
-        return {
-            "login": self.login,
-        }
+        return asdict(self)
 
     @classmethod
-    def from_dict(cls, payload_dict: JWTPayloadDict):
-        return cls(
-            login=payload_dict["login"],
-        )
+    def from_dict(cls, payload_dict: JWTPayloadDict) -> "JWTPayload":
+        return cls(**payload_dict)
 
 
 @dataclass

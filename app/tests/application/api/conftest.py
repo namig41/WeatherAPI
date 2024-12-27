@@ -3,10 +3,9 @@ from fastapi.testclient import TestClient
 
 import pytest
 from presentation.api.main import create_app
-from punq import Container
 
 from application.di.container import init_container
-from settings.config import Settings
+from settings.config import config
 from tests.fixtures import init_dummy_container
 
 
@@ -24,8 +23,7 @@ def client(app: FastAPI) -> TestClient:
 
 
 @pytest.fixture(scope="session")
-def base_url(container: Container) -> str:
-    config: Settings = container.resolve(Settings)
+def base_url() -> str:
     return f"http://{config.API_HOST}:{config.API_PORT}"
 
 
@@ -39,9 +37,8 @@ def locations_prefix() -> str:
     return "locations"
 
 
-@pytest.fixture(scope="session")
-def test_user_data(container: Container) -> dict:
-    config: Settings = container.resolve(Settings)
+@pytest.fixture(scope="function")
+def test_user_data() -> dict:
     return {
         "login": "test",
         "email": config.SMTP_USERNAME,

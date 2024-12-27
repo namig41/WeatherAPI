@@ -32,4 +32,4 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str
 
 
-config = Settings()
+config: Settings = Settings()
