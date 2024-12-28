@@ -1,12 +1,12 @@
 import pytest
+from punq import Container
+
+from domain.entities.user import User
 from infrastructure.exceptions.repository import (
     UserExistsException,
     UserNotFoundException,
 )
 from infrastructure.repository.base import BaseUserRepository
-from punq import Container
-
-from domain.entities.user import User
 from tests.fixtures import get_user
 
 

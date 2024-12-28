@@ -1,9 +1,8 @@
-from infrastructure.task_queue.init import celery
-from infrastructure.weather.base import IWeatherAPIService
-
 from domain.entities.location import Location
 from domain.entities.weather import Weather
 from domain.exceptions.base import ApplicationException
+from infrastructure.task_queue.init import celery
+from infrastructure.weather.base import IWeatherAPIService
 
 
 @celery.task

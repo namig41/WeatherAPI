@@ -8,17 +8,17 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse
 
-from bootstrap.di import init_container
-from infrastructure.jwt.access_token import JWTToken
-from presentation.api.auth.schema import (
-    GetMeResponseSchema,
-    LoginUserRequestSchema,
-)
 from punq import Container
 
 from application.common.interactor import Interactor
+from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
+from infrastructure.jwt.access_token import JWTToken
+from presentation.api.auth_service.auth.schema import (
+    GetMeResponseSchema,
+    LoginUserRequestSchema,
+)
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -62,7 +62,7 @@ async def login_user(
 @router.post(
     "/logout",
     status_code=status.HTTP_200_OK,
-    description="Выход пользователя из системы",
+    description="Завершение сессии",
 )
 async def logout_user(response: Response) -> JSONResponse:
     response.delete_cookie(key="access_token")
@@ -76,6 +76,31 @@ async def logout_user(response: Response) -> JSONResponse:
     description="Получение информации о текущем пользователе",
 )
 async def me(
+    jwt_token: JWTToken = Cookie(None, alias="access_token"),
+    container: Container = Depends(init_container),
+) -> GetMeResponseSchema:
+    try:
+        me_user_action: Interactor[JWTToken, User] = container.resolve(
+            Interactor[JWTToken, User],
+        )
+
+        user: User = await me_user_action(jwt_token)
+
+    except ApplicationException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
+        )
+    return GetMeResponseSchema.from_entity(user)
+
+
+@router.get(
+    "/validate_token",
+    status_code=status.HTTP_200_OK,
+    response_model=GetMeResponseSchema,
+    description="Проверка токена",
+)
+async def validate_token(
     jwt_token: JWTToken = Cookie(None, alias="access_token"),
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:

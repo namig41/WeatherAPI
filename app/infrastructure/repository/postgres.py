@@ -1,15 +1,6 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from infrastructure.exceptions.repository import (
-    LocationNotFoundException,
-    UserExistsException,
-    UserNotFoundException,
-)
-from infrastructure.repository.base import (
-    BaseLocationRepository,
-    BaseUserRepository,
-)
 from sqlalchemy import (
     delete,
     select,
@@ -19,6 +10,15 @@ from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from domain.entities.location import Location
 from domain.entities.user import User
+from infrastructure.exceptions.repository import (
+    LocationNotFoundException,
+    UserExistsException,
+    UserNotFoundException,
+)
+from infrastructure.repository.base import (
+    BaseLocationRepository,
+    BaseUserRepository,
+)
 
 
 @dataclass

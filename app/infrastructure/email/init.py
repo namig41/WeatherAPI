@@ -2,6 +2,7 @@ from aiosmtplib import (
     SMTP,
     SMTPException,
 )
+
 from infrastructure.email.config import SMTPConfig
 from infrastructure.exceptions.email_service import EmailConnectionFailedException
 

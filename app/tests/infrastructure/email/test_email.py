@@ -2,12 +2,13 @@ from email.message import EmailMessage
 
 import pytest
 from aiosmtplib import SMTP
+from punq import Container
+
 from infrastructure.email.config import SMTPConfig
 from infrastructure.email.init import (
     connect_to_smtp_server,
     init_smtp_client,
 )
-from punq import Container
 
 
 @pytest.mark.asyncio

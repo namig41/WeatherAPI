@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 
 import jwt
+
 from infrastructure.exceptions.jwt import (
     JWTDecodeException,
     JWTExpiredException,
@@ -12,7 +13,6 @@ from infrastructure.jwt.base import (
     JWTToken,
 )
 from infrastructure.jwt.config import JWTConfig
-
 from settings.config import config
 
 

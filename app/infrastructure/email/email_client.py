@@ -3,6 +3,7 @@ from email.message import Message
 from typing import Any
 
 from aiosmtplib import SMTP
+
 from infrastructure.email.base import IEmailClientService
 
 

@@ -5,6 +5,19 @@ from functools import (
 
 from aioredis import Redis
 from aiosmtplib import SMTP
+from punq import (
+    Container,
+    Scope,
+)
+from sqlalchemy.ext.asyncio.engine import AsyncEngine
+
+from application.auth.login_user import LoginUserInteractor
+from application.auth.me_user import MeUserInteractor
+from application.common.interactor import Interactor
+from application.user.add_user import AddUserInteractor
+from domain.entities.user import User
+from domain.interfaces.infrastructure.access_service import IAuthAccessService
+from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from infrastructure.auth.access_service import PasswordAuthService
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.auth.password_hasher import SHA256PasswordHasher
@@ -38,19 +51,8 @@ from infrastructure.repository.postgres import (
 from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.open_weather_api import OpenWeatherAPIService
-from presentation.api.auth.schema import LoginUserRequestSchema
-from punq import (
-    Container,
-    Scope,
-)
-from sqlalchemy.ext.asyncio.engine import AsyncEngine
-
-from application.auth.login_user import LoginUserInteractor
-from application.auth.me_user import MeUserInteractor
-from application.common.interactor import Interactor
-from domain.entities.user import User
-from domain.interfaces.infrastructure.access_service import IAuthAccessService
-from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
+from presentation.api.auth_service.auth.schema import LoginUserRequestSchema
+from presentation.api.auth_service.user.schema import AddNewUserRequestSchema
 from settings.config import (
     config,
     Settings,
@@ -182,6 +184,11 @@ def _init_container() -> Container:
     container.register(
         Interactor[JWTToken, User],
         MeUserInteractor,
+    )
+
+    container.register(
+        Interactor[AddNewUserRequestSchema, User],
+        AddUserInteractor,
     )
 
     return container

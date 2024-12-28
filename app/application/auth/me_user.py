@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 
+from application.common.interactor import Interactor
+from domain.entities.user import User
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.jwt.access_token import (
     AccessToken,
     JWTToken,
 )
 from infrastructure.repository.base import BaseUserRepository
-
-from application.common.interactor import Interactor
-from domain.entities.user import User
 
 
 @dataclass

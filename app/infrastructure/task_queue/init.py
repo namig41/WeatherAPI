@@ -1,4 +1,5 @@
 from celery import Celery
+
 from infrastructure.cache.config import CacheConfig
 
 

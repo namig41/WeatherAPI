@@ -3,14 +3,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from aiosmtplib import SMTP
+from punq import Container
+from sqlalchemy.ext.asyncio.engine import AsyncEngine
+
 from bootstrap.di import init_container
 from infrastructure.database.models import (
     create_database,
     start_entity_mappers,
 )
 from infrastructure.email.init import connect_to_smtp_server
-from punq import Container
-from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 
 @asynccontextmanager

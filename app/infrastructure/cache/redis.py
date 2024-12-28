@@ -2,15 +2,15 @@ from dataclasses import dataclass
 
 import aioredis
 from aioredis import Redis
+
+from domain.entities.location import Location
+from domain.entities.weather import Weather
 from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.cache.config import CacheConfig
 from infrastructure.cache.converters import (
     convert_weather_bytes_to_entity,
     convert_weather_entity_to_bytes,
 )
-
-from domain.entities.location import Location
-from domain.entities.weather import Weather
 
 
 @dataclass

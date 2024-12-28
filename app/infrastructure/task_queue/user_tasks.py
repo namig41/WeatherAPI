@@ -1,16 +1,16 @@
 from email.message import EmailMessage
 
+from punq import Container
+
 from bootstrap.di import init_container
+from domain.entities.user import User
+from domain.exceptions.base import ApplicationException
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.config import SMTPConfig
 from infrastructure.email.converters import (
     convert_user_auth_to_email_message,
     convert_user_register_to_email_message,
 )
-from punq import Container
-
-from domain.entities.user import User
-from domain.exceptions.base import ApplicationException
 
 
 async def user_register_send_email_task(

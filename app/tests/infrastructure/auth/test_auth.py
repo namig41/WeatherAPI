@@ -1,7 +1,5 @@
 import pytest
 from faker import Faker
-from infrastructure.exceptions.auth import UserAuthFailedException
-from infrastructure.repository.base import BaseUserRepository
 from punq import Container
 
 from domain.entities.user import User
@@ -9,6 +7,8 @@ from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
+from infrastructure.exceptions.auth import UserAuthFailedException
+from infrastructure.repository.base import BaseUserRepository
 
 
 @pytest.mark.asyncio

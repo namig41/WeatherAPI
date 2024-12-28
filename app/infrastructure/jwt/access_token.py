@@ -12,9 +12,8 @@ from typing import (
     TypeAlias,
 )
 
-from infrastructure.exceptions.jwt import JWTExpiredException
-
 from domain.entities.base import BaseEntity
+from infrastructure.exceptions.jwt import JWTExpiredException
 
 
 JWTPayloadDict: TypeAlias = dict[str, Any]

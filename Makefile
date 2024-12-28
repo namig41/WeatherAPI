@@ -4,6 +4,8 @@ APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
 CACHE_FILE = docker_compose/cache.yaml
 
+# === API Section ===
+
 .PHONY: app
 app-start:
 	${DC} -f ${APP_FILE} up -d
@@ -42,7 +44,7 @@ storage-drop:
 storage-rebuild:
 	${DC} -f ${STORAGE_FILE} build --no-cache
 
-# === cache Section ===
+# === Cache Section ===
 .PHONY: cache-start
 cache-start:
 	${DC} -f ${CACHE_FILE} up -d
@@ -54,3 +56,17 @@ cache-drop:
 .PHONY: cache-remove
 cache-rebuild:
 	${DC} -f ${CACHE_FILE} build --no-cache
+
+# === All Project ===
+
+.PHONY: all
+all:
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} ${ENV} up --build -d
+
+.PHONY: all-drop
+all-drop:
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} down
+
+.PHONY: all-remove
+all-remove:
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} rm -f

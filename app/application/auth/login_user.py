@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+from application.common.interactor import Interactor
+from domain.entities.user import User
+from domain.interfaces.infrastructure.access_service import IAuthAccessService
+from domain.value_objects.raw_password import RawPassword
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.email_config_factory import (
@@ -14,10 +18,6 @@ from infrastructure.jwt.access_token import (
 )
 from infrastructure.repository.base import BaseUserRepository
 from presentation.api.auth.schema import LoginUserRequestSchema
-
-from application.common.interactor import Interactor
-from domain.interfaces.infrastructure.access_service import IAuthAccessService
-from domain.value_objects.raw_password import RawPassword
 
 
 @dataclass
@@ -35,11 +35,11 @@ class LoginUserInteractor(Interactor[LoginUserRequestSchema, JWTToken]):
             RawPassword(data.password),
         )
 
-        payload = JWTPayload.from_dict({"login": data.login})
-        access_token = AccessToken.create_with_expiration(payload)
-        jwt_token = self.access_token_processor.encode(access_token)
+        payload: JWTPayload = JWTPayload.from_dict({"login": data.login})
+        access_token: AccessToken = AccessToken.create_with_expiration(payload)
+        jwt_token: JWTToken = self.access_token_processor.encode(access_token)
 
-        user = await self.users_repository.get_user_by_login(data.login)
+        user: User = await self.users_repository.get_user_by_login(data.login)
 
         await send_user_authorization_email(
             user,

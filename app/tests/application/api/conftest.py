@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import pytest
+
 from bootstrap.di import init_container
 from presentation.api.main import create_app
-
 from settings.config import config
 from tests.fixtures import init_dummy_container
 

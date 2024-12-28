@@ -5,13 +5,13 @@ from httpx import (
     HTTPStatusError,
     Response,
 )
+
+from domain.entities.location import Location
+from domain.entities.weather import Weather
 from infrastructure.exceptions.weather import WeatherAPIServiceException
 from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.converters import convert_weather_data_to_entity
-
-from domain.entities.location import Location
-from domain.entities.weather import Weather
 
 
 @dataclass

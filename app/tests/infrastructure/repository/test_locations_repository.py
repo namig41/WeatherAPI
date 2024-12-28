@@ -1,9 +1,9 @@
 import pytest
-from infrastructure.exceptions.repository import LocationNotFoundException
-from infrastructure.repository.base import BaseLocationRepository
 from punq import Container
 
 from domain.entities.location import Location
+from infrastructure.exceptions.repository import LocationNotFoundException
+from infrastructure.repository.base import BaseLocationRepository
 from tests.fixtures import get_location
 
 

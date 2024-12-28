@@ -63,7 +63,7 @@ skip_glob=[
     ".venv",
 ]
 known_fastapi=["fastapi","starlette"]
-known_first_party=["application","domain","infra","logic","settings","tests"]
+known_first_party=["application", "domain", "infrastructure", "bootstrap", "presentation", "settings", "tests"]
 sections=[
     "FUTURE",
     "STDLIB",

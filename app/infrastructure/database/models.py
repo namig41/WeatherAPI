@@ -1,7 +1,3 @@
-from infrastructure.database.custom_types import (
-    HashedPasswordType,
-    UserEmailType,
-)
 from sqlalchemy import (
     Column,
     Float,
@@ -15,6 +11,10 @@ from sqlalchemy.orm import registry
 
 from domain.entities.location import Location
 from domain.entities.user import User
+from infrastructure.database.custom_types import (
+    HashedPasswordType,
+    UserEmailType,
+)
 
 
 mapper_registry = registry()

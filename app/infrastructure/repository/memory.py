@@ -4,6 +4,8 @@ from dataclasses import (
 )
 from typing import Iterable
 
+from domain.entities.location import Location
+from domain.entities.user import User
 from infrastructure.exceptions.base import InfraException
 from infrastructure.exceptions.repository import (
     LocationNotFoundException,
@@ -14,9 +16,6 @@ from infrastructure.repository.base import (
     BaseLocationRepository,
     BaseUserRepository,
 )
-
-from domain.entities.location import Location
-from domain.entities.user import User
 
 
 @dataclass

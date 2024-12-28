@@ -2,13 +2,13 @@ from decimal import Decimal
 
 import pytest
 from aioredis import Redis
-from infrastructure.cache.base import ICacheWeatherService
-from infrastructure.cache.config import CacheConfig
-from infrastructure.cache.redis import init_redis
 from punq import Container
 
 from domain.entities.location import Location
 from domain.entities.weather import Weather
+from infrastructure.cache.base import ICacheWeatherService
+from infrastructure.cache.config import CacheConfig
+from infrastructure.cache.redis import init_redis
 
 
 @pytest.mark.asyncio

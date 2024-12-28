@@ -1,10 +1,9 @@
 from email.message import EmailMessage
 
-from infrastructure.email.config import SMTPConfig
-
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.entities.weather import Weather
+from infrastructure.email.config import SMTPConfig
 
 
 def convert_recieve_weather_to_email_message(

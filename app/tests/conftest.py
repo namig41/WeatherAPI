@@ -2,9 +2,9 @@ from random import SystemRandom
 
 import pytest
 from faker import Faker
-from infrastructure.database.models import start_entity_mappers
 from punq import Container
 
+from infrastructure.database.models import start_entity_mappers
 from tests.fixtures import init_dummy_container
 
 

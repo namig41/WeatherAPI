@@ -1,11 +1,11 @@
 from email.message import EmailMessage
 
 from aiosmtplib import SMTPSenderRefused
-from infrastructure.email.base import IEmailClientService
-from infrastructure.email.config import ConfirmationEmailConfig
 
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
+from infrastructure.email.base import IEmailClientService
+from infrastructure.email.config import ConfirmationEmailConfig
 
 
 async def send_user_registration_email(

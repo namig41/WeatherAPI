@@ -4,6 +4,7 @@ from datetime import (
     timezone,
 )
 
+from domain.exceptions.base import ApplicationException
 from infrastructure.exceptions.auth import UserAuthFailedException
 from infrastructure.jwt.access_token import (
     AccessToken,
@@ -14,8 +15,6 @@ from infrastructure.jwt.base import (
     JWTPayloadDict,
     JWTToken,
 )
-
-from domain.exceptions.base import ApplicationException
 
 
 @dataclass

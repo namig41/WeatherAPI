@@ -2,21 +2,21 @@ from decimal import Decimal
 from functools import partial
 from typing import Generator
 
-from bootstrap.di import _init_container
 from faker import Faker
-from infrastructure.auth.password_hasher import SHA256PasswordHasher
-from infrastructure.database.config import DBConfig
-from infrastructure.database.init import init_database
 from punq import (
     Container,
     Scope,
 )
 from sqlalchemy.ext.asyncio import AsyncEngine
 
+from bootstrap.di import _init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
+from infrastructure.auth.password_hasher import SHA256PasswordHasher
+from infrastructure.database.config import DBConfig
+from infrastructure.database.init import init_database
 from settings.config import Settings
 
 

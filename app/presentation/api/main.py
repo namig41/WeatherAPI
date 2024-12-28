@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
-from presentation.api.auth.router import router as auth_router
+
+from presentation.api.auth_service.auth.router import router as auth_router
+from presentation.api.auth_service.user.router import router as user_router
 from presentation.api.lifespan import lifespan
-from presentation.api.location.router import router as location_router
-from presentation.api.user.router import router as user_router
-from presentation.api.weather.router import router as weather_router
+from presentation.api.weather_service.location.router import router as location_router
+from presentation.api.weather_service.weather.router import router as weather_router
 
 
 def create_app() -> FastAPI:

@@ -7,26 +7,18 @@ from fastapi import (
     status,
 )
 
+from punq import Container
+
+from application.common.interactor import Interactor
 from bootstrap.di import init_container
-from infrastructure.email.base import IEmailClientService
-from infrastructure.email.email_config_factory import (
-    ConfirmationEmailConfigFactory,
-    EmailMessageType,
-)
-from infrastructure.email.services.user import send_user_registration_email
+from domain.entities.user import User
+from domain.exceptions.base import ApplicationException
 from infrastructure.repository.base import BaseUserRepository
-from presentation.api.user.schema import (
+from presentation.api.auth_service.user.schema import (
     AddNewUserRequestSchema,
     GetUserResponseSchema,
     GetUsersResponseSchema,
 )
-from punq import Container
-
-from domain.entities.user import User
-from domain.exceptions.base import ApplicationException
-from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
-from domain.value_objects.raw_password import RawPassword
-from domain.value_objects.user_email import UserEmail
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -56,7 +48,7 @@ async def get_all_user(
     "/{login}",
     status_code=status.HTTP_200_OK,
     response_model=GetUserResponseSchema,
-    description="Получение пользователя по логину",
+    description="Авторизация и выдача токена",
 )
 async def get_user(
     login: str,
@@ -77,33 +69,19 @@ async def get_user(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=GetUserResponseSchema,
-    description="Добавление пользователя",
+    description="Регистрация нового пользователя",
 )
 async def add_user(
     user_data: AddNewUserRequestSchema,
     container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        hasher_password: IPasswordHasher = container.resolve(IPasswordHasher)
+        add_user_action: Interactor[AddNewUserRequestSchema, User] = container.resolve(
+            Interactor[AddNewUserRequestSchema, User],
+        )
 
-        await users_repository.user_exists(user_data.login)
-        user: User = User.create_with_raw_password(
-            user_data.login,
-            UserEmail(user_data.email),
-            RawPassword(user_data.password),
-            hasher_password,
-        )
-        await users_repository.add_user(user)
-        email_service: IEmailClientService = container.resolve(IEmailClientService)
-        confirmation_email_config: ConfirmationEmailConfigFactory = container.resolve(
-            ConfirmationEmailConfigFactory,
-        )
-        await send_user_registration_email(
-            user,
-            confirmation_email_config.create(EmailMessageType.REGISTRATION),
-            email_service,
-        )
+        user: User = await add_user_action(user_data)
+
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
