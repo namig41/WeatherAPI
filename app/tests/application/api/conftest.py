@@ -23,8 +23,18 @@ def client(app: FastAPI) -> TestClient:
 
 
 @pytest.fixture(scope="session")
+def base_weather_service_url() -> str:
+    return f"http://{config.WEATHER_SERIVCE_API_HOST}:{config.WEATHER_SERIVCE_API_PORT}"
+
+
+@pytest.fixture(scope="session")
+def base_auth_service_url() -> str:
+    return f"http://{config.AUTH_SERIVCE_API_HOST}:{config.AUTH_SERIVCE_API_PORT}"
+
+
+@pytest.fixture(scope="session")
 def base_url() -> str:
-    return f"http://{config.API_HOST}:{config.API_PORT}"
+    return f"http://{config.AUTH_SERIVCE_API_HOST}:{config.AUTH_SERIVCE_API_PORT}"
 
 
 @pytest.fixture(scope="session")

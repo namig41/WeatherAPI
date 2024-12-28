@@ -12,14 +12,16 @@ from punq import (
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from application.auth.login_user import LoginUserInteractor
-from application.auth.me_user import MeUserInteractor
+from application.auth.validate_token import ValidateTokenInteractor
 from application.common.interactor import Interactor
 from application.user.add_user import AddUserInteractor
 from domain.entities.user import User
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from infrastructure.auth.access_service import PasswordAuthService
+from infrastructure.auth.access_service_api import AuthServiceAPI
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
+from infrastructure.auth.config import AuthConfig
 from infrastructure.auth.password_hasher import SHA256PasswordHasher
 from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.cache.config import CacheConfig
@@ -65,7 +67,7 @@ def init_container() -> Container:
 
 
 def _init_container() -> Container:
-    container = Container()
+    container: Container = Container()
 
     container.register(
         Settings,
@@ -101,6 +103,17 @@ def _init_container() -> Container:
     container.register(
         BaseLocationRepository,
         PostgreSQLLocationRepository,
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        AuthConfig,
+        instance=AuthConfig(),
+        scope=Scope.singleton,
+    )
+
+    container.register(
+        AuthServiceAPI,
         scope=Scope.singleton,
     )
 
@@ -183,7 +196,7 @@ def _init_container() -> Container:
 
     container.register(
         Interactor[JWTToken, User],
-        MeUserInteractor,
+        ValidateTokenInteractor,
     )
 
     container.register(

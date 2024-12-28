@@ -88,3 +88,22 @@ async def add_user(
             detail={"error": exception.message},
         )
     return GetUserResponseSchema.from_entity(user)
+
+
+@router.delete(
+    "/",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Удаление пользователя",
+)
+async def delete_user(
+    login: str,
+    container: Container = Depends(init_container),
+) -> None:
+    try:
+        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
+        await users_repository.delete_user_by_login(login=login)
+    except ApplicationException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
+        )

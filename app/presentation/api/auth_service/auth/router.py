@@ -70,31 +70,6 @@ async def logout_user(response: Response) -> JSONResponse:
 
 
 @router.get(
-    "/me",
-    status_code=status.HTTP_200_OK,
-    response_model=GetMeResponseSchema,
-    description="Получение информации о текущем пользователе",
-)
-async def me(
-    jwt_token: JWTToken = Cookie(None, alias="access_token"),
-    container: Container = Depends(init_container),
-) -> GetMeResponseSchema:
-    try:
-        me_user_action: Interactor[JWTToken, User] = container.resolve(
-            Interactor[JWTToken, User],
-        )
-
-        user: User = await me_user_action(jwt_token)
-
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
-    return GetMeResponseSchema.from_entity(user)
-
-
-@router.get(
     "/validate_token",
     status_code=status.HTTP_200_OK,
     response_model=GetMeResponseSchema,
@@ -105,12 +80,10 @@ async def validate_token(
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:
     try:
-        me_user_action: Interactor[JWTToken, User] = container.resolve(
+        validate_token_action: Interactor[JWTToken, User] = container.resolve(
             Interactor[JWTToken, User],
         )
-
-        user: User = await me_user_action(jwt_token)
-
+        user: User = await validate_token_action(jwt_token)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

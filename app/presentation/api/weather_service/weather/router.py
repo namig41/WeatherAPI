@@ -14,7 +14,7 @@ from domain.exceptions.base import ApplicationException
 from infrastructure.cache.base import ICacheWeatherService
 from infrastructure.repository.base import BaseLocationRepository
 from infrastructure.weather.base import IWeatherAPIService
-from presentation.api.weather.schema import WeatherResponseSchema
+from presentation.api.weather_service.weather.schema import WeatherResponseSchema
 
 
 router = APIRouter(prefix="/weather", tags=["Weather"])

@@ -3,12 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 
-from presentation.api.auth_service.auth.router import router as auth_router
-from presentation.api.auth_service.user.router import router as user_router
 from presentation.api.lifespan import lifespan
 from presentation.api.weather_service.location.router import router as location_router
 from presentation.api.weather_service.weather.router import router as weather_router
-from settings.config import config
 
 
 def create_app() -> FastAPI:
@@ -33,8 +30,6 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(location_router)
-    app.include_router(user_router)
-    app.include_router(auth_router)
     app.include_router(weather_router)
 
     return app
@@ -45,8 +40,8 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:create_app",
         factory=True,
-        host=config.WEATHER_SERIVCE_API_HOST,
-        port=config.WEATHER_SERIVCE_API_PORT,
+        host="0.0.0.0",
+        port=8000,
         log_level="debug",
         reload=True,
         workers=1,

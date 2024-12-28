@@ -40,7 +40,7 @@ storage-start:
 storage-drop:
 	${DC} -f ${STORAGE_FILE} down
 
-.PHONY: storage-remove
+.PHONY: storage-rebuild
 storage-rebuild:
 	${DC} -f ${STORAGE_FILE} build --no-cache
 

@@ -96,3 +96,24 @@ async def add_location(
             detail={"error": exception.message},
         )
     return LocationResponseSchema.from_entity(location)
+
+
+@router.delete(
+    "/",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Добавление новой локации",
+)
+async def delete_location(
+    location_name: str,
+    container: Container = Depends(init_container),
+) -> None:
+    try:
+        location_repository: BaseLocationRepository = container.resolve(
+            BaseLocationRepository,
+        )
+        await location_repository.delete_location_by_name(name=location_name)
+    except ApplicationException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
+        )

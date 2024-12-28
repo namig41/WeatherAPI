@@ -11,7 +11,7 @@ from infrastructure.repository.base import BaseUserRepository
 
 
 @dataclass
-class MeUserInteractor(Interactor[JWTToken, User]):
+class ValidateTokenInteractor(Interactor[JWTToken, User]):
 
     access_token_processor: AccessTokenProcessor
     users_repository: BaseUserRepository

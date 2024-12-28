@@ -4,8 +4,11 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PYTHONPATH: str
 
-    API_HOST: str
-    API_PORT: str
+    AUTH_SERIVCE_API_HOST: str
+    AUTH_SERIVCE_API_PORT: int
+
+    WEATHER_SERIVCE_API_HOST: str
+    WEATHER_SERIVCE_API_PORT: int
 
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
