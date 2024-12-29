@@ -3,14 +3,14 @@ from punq import Container
 
 from domain.entities.location import Location
 from infrastructure.exceptions.repository import LocationNotFoundException
-from infrastructure.repository.base import BaseLocationRepository
+from infrastructure.repository.base import BaseUserLocationRepository
 from tests.fixtures import get_location
 
 
 @pytest.mark.asyncio
 async def test_location_repository(container: Container):
-    location_repository: BaseLocationRepository = container.resolve(
-        BaseLocationRepository,
+    location_repository: BaseUserLocationRepository = container.resolve(
+        BaseUserLocationRepository,
     )
     location_1: Location = next(get_location())
     await location_repository.add_location(location_1)

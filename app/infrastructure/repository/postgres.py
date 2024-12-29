@@ -16,7 +16,7 @@ from infrastructure.exceptions.repository import (
     UserNotFoundException,
 )
 from infrastructure.repository.base import (
-    BaseLocationRepository,
+    BaseUserLocationRepository,
     BaseUserRepository,
 )
 
@@ -64,18 +64,22 @@ class PostgreSQLUserRepository(BaseUserRepository):
 
 
 @dataclass
-class PostgreSQLLocationRepository(BaseLocationRepository):
+class PostgreSQLUserLocationRepository(BaseUserLocationRepository):
 
     engine: AsyncEngine
 
-    async def add_location(self, location: Location) -> None:
+    async def add_location(self, user: User, location: Location) -> None:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
+            location.user_id = user.id
             session.add(location)
             await session.commit()
 
-    async def get_location_by_name(self, name: str) -> Location:
+    async def get_location_by_name(self, user: User, name: str) -> Location:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
-            query = select(Location).where(Location.name == name)
+            query = select(Location).where(
+                Location.name == name,
+                Location.user_id == user.id,
+            )
             result = await session.execute(query)
             location: Location | None = result.scalar_one_or_none()
 
@@ -84,15 +88,18 @@ class PostgreSQLLocationRepository(BaseLocationRepository):
 
             return location
 
-    async def get_all_location(self) -> Iterable[Location]:
+    async def get_all_location(self, user: User) -> Iterable[Location]:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
-            query = select(Location)
+            query = select(Location).where(Location.user_id == user.id)
             result = await session.scalars(query)
             locations: Iterable[Location] = result.all()
             return locations
 
-    async def delete_location_by_name(self, name: str) -> None:
+    async def delete_location_by_name(self, user: User, name: str) -> None:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
-            query = delete(Location).where(Location.name == name)
+            query = delete(Location).where(
+                Location.name == name,
+                Location.user_id == user.id,
+            )
             await session.execute(query)
             await session.commit()

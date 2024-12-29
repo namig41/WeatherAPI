@@ -13,7 +13,7 @@ from infrastructure.exceptions.repository import (
     UserNotFoundException,
 )
 from infrastructure.repository.base import (
-    BaseLocationRepository,
+    BaseUserLocationRepository,
     BaseUserRepository,
 )
 
@@ -55,7 +55,7 @@ class MemoryUserRepository(BaseUserRepository):
 
 
 @dataclass
-class MemoryLocationRepository(BaseLocationRepository):
+class MemoryLocationRepository(BaseUserLocationRepository):
 
     _locations: set[Location] = field(
         default_factory=set,

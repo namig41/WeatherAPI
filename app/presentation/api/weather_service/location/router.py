@@ -6,13 +6,16 @@ from fastapi import (
     HTTPException,
     status,
 )
+from fastapi.security import OAuth2PasswordBearer
 
 from punq import Container
 
 from bootstrap.di import init_container
 from domain.entities.location import Location
+from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from infrastructure.repository.base import BaseLocationRepository
+from infrastructure.auth.access_service_api import AuthServiceAPI
+from infrastructure.repository.base import BaseUserLocationRepository
 from presentation.api.weather_service.location.schema import (
     AddNewLocationRequestSchema,
     LocationResponseSchema,
@@ -21,6 +24,7 @@ from presentation.api.weather_service.location.schema import (
 
 
 router = APIRouter(prefix="/locations", tags=["Location"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 @router.get(
@@ -30,13 +34,17 @@ router = APIRouter(prefix="/locations", tags=["Location"])
     description="Получение всех локаций",
 )
 async def get_all_location(
+    token: str = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> LocationsResponseSchema:
     try:
-        location_repository: BaseLocationRepository = container.resolve(
-            BaseLocationRepository,
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
+        user: User = await auth_service_api.validate_token(token)
+
+        location_repository: BaseUserLocationRepository = container.resolve(
+            BaseUserLocationRepository,
         )
-        locations: Iterable[Location] = await location_repository.get_all_location()
+        locations: Iterable[Location] = await location_repository.get_all_location(user)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -53,13 +61,18 @@ async def get_all_location(
 )
 async def get_location(
     name: str,
+    token: str = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        location_repository: BaseLocationRepository = container.resolve(
-            BaseLocationRepository,
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
+        user: User = await auth_service_api.validate_token(token)
+
+        location_repository: BaseUserLocationRepository = container.resolve(
+            BaseUserLocationRepository,
         )
         location: Location = await location_repository.get_location_by_name(
+            user,
             name=name,
         )
     except ApplicationException as exception:
@@ -78,18 +91,22 @@ async def get_location(
 )
 async def add_location(
     location_data: AddNewLocationRequestSchema,
+    token: str = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        location_repository: BaseLocationRepository = container.resolve(
-            BaseLocationRepository,
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
+        user: User = await auth_service_api.validate_token(token)
+
+        location_repository: BaseUserLocationRepository = container.resolve(
+            BaseUserLocationRepository,
         )
         location: Location = Location(
             location_data.name,
             location_data.latitude,
             location_data.longitude,
         )
-        await location_repository.add_location(location)
+        await location_repository.add_location(user, location)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -105,13 +122,17 @@ async def add_location(
 )
 async def delete_location(
     location_name: str,
+    token: str = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> None:
     try:
-        location_repository: BaseLocationRepository = container.resolve(
-            BaseLocationRepository,
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
+        user: User = await auth_service_api.validate_token(token)
+
+        location_repository: BaseUserLocationRepository = container.resolve(
+            BaseUserLocationRepository,
         )
-        await location_repository.delete_location_by_name(name=location_name)
+        await location_repository.delete_location_by_name(user=user, name=location_name)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

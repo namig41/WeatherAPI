@@ -10,7 +10,7 @@ from tests.fixtures import init_dummy_container
 
 
 @pytest.fixture(scope="session")
-def app() -> FastAPI:
+def app_auth_service() -> FastAPI:
     app: FastAPI = create_app()
     app.dependency_overrides[init_container] = init_dummy_container
 
@@ -18,8 +18,21 @@ def app() -> FastAPI:
 
 
 @pytest.fixture(scope="session")
-def client(app: FastAPI) -> TestClient:
-    return TestClient(app=app)
+def app_weather_service() -> FastAPI:
+    app: FastAPI = create_app()
+    app.dependency_overrides[init_container] = init_dummy_container
+
+    return app
+
+
+@pytest.fixture(scope="session")
+def auth_client(app_auth_service: FastAPI) -> TestClient:
+    return TestClient(app=app_auth_service)
+
+
+@pytest.fixture(scope="session")
+def weather_client(app_weather_service: FastAPI) -> TestClient:
+    return TestClient(app=app_weather_service)
 
 
 @pytest.fixture(scope="session")

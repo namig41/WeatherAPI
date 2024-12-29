@@ -3,7 +3,7 @@ from functools import lru_cache
 
 import jwt
 
-from infrastructure.exceptions.jwt import (
+from infrastructure.exceptions.jwt_token import (
     JWTDecodeException,
     JWTExpiredException,
 )

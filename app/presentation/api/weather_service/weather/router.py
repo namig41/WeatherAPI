@@ -4,20 +4,20 @@ from fastapi import (
     HTTPException,
     status,
 )
+from fastapi.security import OAuth2PasswordBearer
 
 from punq import Container
 
+from application.common.interactor import Interactor
 from bootstrap.di import init_container
-from domain.entities.location import Location
 from domain.entities.weather import Weather
 from domain.exceptions.base import ApplicationException
-from infrastructure.cache.base import ICacheWeatherService
-from infrastructure.repository.base import BaseLocationRepository
-from infrastructure.weather.base import IWeatherAPIService
+from infrastructure.auth.access_service_api import AuthServiceAPI
 from presentation.api.weather_service.weather.schema import WeatherResponseSchema
 
 
 router = APIRouter(prefix="/weather", tags=["Weather"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 @router.get(
@@ -28,24 +28,18 @@ router = APIRouter(prefix="/weather", tags=["Weather"])
 )
 async def get_weather_by_name(
     location_name: str,
+    token: str = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> WeatherResponseSchema:
     try:
-        location_repository: BaseLocationRepository = container.resolve(
-            BaseLocationRepository,
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
+        await auth_service_api.validate_token(token)
+
+        get_weather_action: Interactor[str, Weather] = container.resolve(
+            Interactor[str, Weather],
         )
-        weather_service: IWeatherAPIService = container.resolve(IWeatherAPIService)
-        cache_service: ICacheWeatherService = container.resolve(ICacheWeatherService)
-        location: Location = await location_repository.get_location_by_name(
-            location_name,
-        )
-        weather: Weather | None = await cache_service.get_weather_by_location_name(
-            location,
-        )
-        if weather is not None:
-            return WeatherResponseSchema.from_entity(weather)
-        weather = await weather_service.get_weather_by_location_name(location)
-        await cache_service.set_weather_by_location_name(location, weather)
+        weather: Weather = await get_weather_action(location_name)
+
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

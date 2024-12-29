@@ -1,3 +1,4 @@
+import json
 from dataclasses import (
     asdict,
     dataclass,
@@ -13,7 +14,7 @@ from typing import (
 )
 
 from domain.entities.base import BaseEntity
-from infrastructure.exceptions.jwt import JWTExpiredException
+from infrastructure.exceptions.jwt_token import JWTExpiredException
 
 
 JWTPayloadDict: TypeAlias = dict[str, Any]
@@ -22,14 +23,22 @@ JWTToken: TypeAlias = str
 
 @dataclass
 class JWTPayload:
+    user_id: int
     login: str
 
-    def to_dict(self) -> JWTPayloadDict:
-        return asdict(self)
+    def to_raw(self) -> str:
+        return json.dumps(asdict(self))
 
     @classmethod
     def from_dict(cls, payload_dict: JWTPayloadDict) -> "JWTPayload":
         return cls(**payload_dict)
+
+    @classmethod
+    def from_raw(cls, raw_payload: str) -> "JWTPayload":
+        return cls.from_dict(json.loads(raw_payload))
+
+    def __str__(self):
+        return self.to_raw()
 
 
 @dataclass
@@ -58,5 +67,5 @@ class AccessToken(BaseEntity):
         payload_dict: JWTPayloadDict,
         minutes: int = 5,
     ) -> "AccessToken":
-        payload = JWTPayload.from_dict(payload_dict)
+        payload: JWTPayload = JWTPayload.from_dict(payload_dict)
         return cls.create_with_expiration(payload=payload, minutes=minutes)

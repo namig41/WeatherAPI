@@ -1,15 +1,21 @@
+from typing import Annotated
+
 from fastapi import (
     APIRouter,
-    Cookie,
     Depends,
     HTTPException,
     Response,
     status,
 )
 from fastapi.responses import JSONResponse
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    OAuth2PasswordRequestForm,
+)
 
 from punq import Container
 
+from application.auth.dto import AccessTokenDTO
 from application.common.interactor import Interactor
 from bootstrap.di import init_container
 from domain.entities.user import User
@@ -23,6 +29,8 @@ from presentation.api.auth_service.auth.schema import (
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 
 @router.post(
     "/login",
@@ -30,33 +38,28 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
     description="Авторизация пользователя",
 )
 async def login_user(
-    user_data: LoginUserRequestSchema,
-    response: Response,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],  # type: ignore
     container: Container = Depends(init_container),
-) -> JSONResponse:
+) -> AccessTokenDTO:
     try:
-        login_user_action: Interactor[LoginUserRequestSchema, JWTToken] = (
+        user_data: LoginUserRequestSchema = LoginUserRequestSchema(
+            login=form_data.username,
+            password=form_data.password,
+        )
+
+        login_user_action: Interactor[LoginUserRequestSchema, AccessTokenDTO] = (
             container.resolve(
-                Interactor[LoginUserRequestSchema, JWTToken],
+                Interactor[LoginUserRequestSchema, AccessTokenDTO],
             )
         )
-
-        jwt_token: JWTToken = await login_user_action(user_data)
-
-        response.set_cookie(
-            key="access_token",
-            value=jwt_token,
-            samesite="lax",
-            secure=False,
-        )
-
+        access_token: AccessTokenDTO = await login_user_action(user_data)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": exception.message},
         )
 
-    return JSONResponse(content={"access_token": jwt_token})
+    return access_token
 
 
 @router.post(
@@ -76,14 +79,14 @@ async def logout_user(response: Response) -> JSONResponse:
     description="Проверка токена",
 )
 async def validate_token(
-    jwt_token: JWTToken = Cookie(None, alias="access_token"),
+    token: JWTToken = Depends(oauth2_scheme),
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:
     try:
         validate_token_action: Interactor[JWTToken, User] = container.resolve(
             Interactor[JWTToken, User],
         )
-        user: User = await validate_token_action(jwt_token)
+        user: User = await validate_token_action(token)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

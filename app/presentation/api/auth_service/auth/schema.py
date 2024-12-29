@@ -9,14 +9,14 @@ class LoginUserRequestSchema(BaseModel):
 
 
 class GetMeResponseSchema(BaseModel):
+    user_id: int | None
     login: str
     email: str
-    password: str
 
     @classmethod
     def from_entity(cls, user: User) -> "GetMeResponseSchema":
         return cls(
+            user_id=user.id,
             login=user.login,
             email=user.email.to_raw(),
-            password=user.hashed_password.to_raw(),
         )

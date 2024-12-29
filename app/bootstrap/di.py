@@ -11,11 +11,14 @@ from punq import (
 )
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
+from application.auth.dto import AccessTokenDTO
 from application.auth.login_user import LoginUserInteractor
 from application.auth.validate_token import ValidateTokenInteractor
 from application.common.interactor import Interactor
 from application.user.add_user import AddUserInteractor
+from application.weather.get_weather import GetWeatherInteractor
 from domain.entities.user import User
+from domain.entities.weather import Weather
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from infrastructure.auth.access_service import PasswordAuthService
@@ -43,11 +46,11 @@ from infrastructure.jwt.jwt_processor import PyJWTProcessor
 from infrastructure.logger.base import ILogger
 from infrastructure.logger.logger import create_logger_dependency
 from infrastructure.repository.base import (
-    BaseLocationRepository,
+    BaseUserLocationRepository,
     BaseUserRepository,
 )
 from infrastructure.repository.postgres import (
-    PostgreSQLLocationRepository,
+    PostgreSQLUserLocationRepository,
     PostgreSQLUserRepository,
 )
 from infrastructure.weather.base import IWeatherAPIService
@@ -101,8 +104,8 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
     container.register(
-        BaseLocationRepository,
-        PostgreSQLLocationRepository,
+        BaseUserLocationRepository,
+        PostgreSQLUserLocationRepository,
         scope=Scope.singleton,
     )
 
@@ -190,7 +193,7 @@ def _init_container() -> Container:
     )
 
     container.register(
-        Interactor[LoginUserRequestSchema, JWTToken],
+        Interactor[LoginUserRequestSchema, AccessTokenDTO],
         LoginUserInteractor,
     )
 
@@ -202,6 +205,11 @@ def _init_container() -> Container:
     container.register(
         Interactor[AddNewUserRequestSchema, User],
         AddUserInteractor,
+    )
+
+    container.register(
+        Interactor[str, Weather],
+        GetWeatherInteractor,
     )
 
     return container

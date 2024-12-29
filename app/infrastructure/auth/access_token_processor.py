@@ -26,17 +26,20 @@ class AccessTokenProcessor:
         token: AccessToken,
     ) -> JWTToken:
         jwt_token_payload: JWTPayloadDict = {
-            "sub": token.payload.to_dict(),
+            "sub": str(token.payload),
             "exp": token.expires_in,
         }
         return self.jwt_processor.encode(jwt_token_payload)
 
     def decode(self, token: JWTToken) -> AccessToken:
         try:
-            payload: JWTPayloadDict = self.jwt_processor.decode(token)
+            jwt_token_payload: JWTPayloadDict = self.jwt_processor.decode(token)
             access_token = AccessToken(
-                payload=JWTPayload.from_dict(payload),
-                expires_in=datetime.fromtimestamp(payload["exp"], tz=timezone.utc),
+                payload=JWTPayload.from_raw(jwt_token_payload["sub"]),
+                expires_in=datetime.fromtimestamp(
+                    jwt_token_payload["exp"],
+                    tz=timezone.utc,
+                ),
             )
             return access_token
         except ApplicationException:
