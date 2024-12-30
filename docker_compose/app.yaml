@@ -13,19 +13,19 @@ services:
       - ../.env
     networks:
       - backend
-  # celery-worker:
-  #   container_name: celery-worker
-  #   build:
-  #     context: ..
-  #     dockerfile: Dockerfile
-  #   command: >
-  #     celery -A infrastructure.task_queue.init worker --loglevel=info
-  #   depends_on:
-  #     - redis
-  #   env_file:
-  #     - ../.env
-  #   networks:
-  #     - backend
+  celery-worker:
+    container_name: celery-worker
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: >
+      celery -A infrastructure.task_queue.init worker --loglevel=info
+    depends_on:
+      - redis
+    env_file:
+      - ../.env
+    networks:
+      - backend
 
 networks:
   backend:

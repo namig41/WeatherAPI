@@ -33,6 +33,7 @@ qredis = "^1.1.0"
 aiogram = "^3.16.0"
 pyjwt = "^2.10.1"
 python-multipart = "^0.0.20"
+flower = "^2.0.1"
 
 
 [build-system]

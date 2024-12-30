@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
+from smtplib import SMTP
 
 from fastapi import FastAPI
 
-from aiosmtplib import SMTP
 from punq import Container
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 

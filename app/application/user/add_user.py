@@ -6,12 +6,9 @@ from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
 from infrastructure.email.base import IEmailClientService
-from infrastructure.email.email_config_factory import (
-    ConfirmationEmailConfigFactory,
-    EmailMessageType,
-)
-from infrastructure.email.services.user import send_user_registration_email
+from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.repository.base import BaseUserRepository
+from infrastructure.task_queue.email_tasks.user import send_user_confirmation_email
 from presentation.api.auth_service.user.schema import AddNewUserRequestSchema
 
 
@@ -33,10 +30,9 @@ class AddUserInteractor(Interactor[AddNewUserRequestSchema, User]):
         )
         await self.users_repository.add_user(user)
 
-        await send_user_registration_email(
-            user,
-            self.confirmation_email_config.create(EmailMessageType.REGISTRATION),
-            self.email_service,
+        send_user_confirmation_email.delay(
+            user.login,
+            user.email.to_raw(),
         )
 
         return user

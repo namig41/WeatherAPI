@@ -9,12 +9,11 @@ def create_task_queue(cache_config: CacheConfig) -> Celery:
         broker=cache_config.get_url("redis"),
         backend=cache_config.get_url("redis"),
         include=[
-            "app.infrastructure.task_queue.user_tasks",
-            "app.infrastructure.task_queue.weather_tasks",
+            "infrastructure.task_queue.email_tasks.user",
         ],
     )
     return task_queue
 
 
 cache_config: CacheConfig = CacheConfig()
-celery: Celery = create_task_queue(cache_config)
+celery_app: Celery = create_task_queue(cache_config)

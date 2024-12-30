@@ -4,8 +4,12 @@ import pytest
 from faker import Faker
 from punq import Container
 
+from domain.entities.user import User
 from infrastructure.database.models import start_entity_mappers
-from tests.fixtures import init_dummy_container
+from tests.fixtures import (
+    get_user,
+    init_dummy_container,
+)
 
 
 @pytest.fixture
@@ -25,3 +29,8 @@ def setup_before_all_tests(faker: Faker) -> None:
     faker.seed_instance(random_seed)
 
     start_entity_mappers()
+
+
+@pytest.fixture(scope="function")
+def test_user_entity() -> User:
+    return next(get_user())

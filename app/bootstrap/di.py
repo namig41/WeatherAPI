@@ -2,9 +2,9 @@ from functools import (
     lru_cache,
     partial,
 )
+from smtplib import SMTP
 
 from aioredis import Redis
-from aiosmtplib import SMTP
 from punq import (
     Container,
     Scope,
@@ -36,7 +36,7 @@ from infrastructure.database.config import DBConfig
 from infrastructure.database.init import init_database
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.config import SMTPConfig
-from infrastructure.email.email_client import AioSMTPEmailClient
+from infrastructure.email.email_client import SMTPEmailClient
 from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.email.init import init_smtp_client
 from infrastructure.jwt.access_token import JWTToken
@@ -188,7 +188,7 @@ def _init_container() -> Container:
 
     container.register(
         IEmailClientService,
-        AioSMTPEmailClient,
+        SMTPEmailClient,
         scope=Scope.singleton,
     )
 
