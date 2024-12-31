@@ -25,7 +25,8 @@ async def test_location_repository(test_user_entity: User, container: Container)
 
     assert (
         await location_repository.get_location_by_name(
-            test_user_entity, location_1.name,
+            test_user_entity,
+            location_1.name,
         ) == location_1
     )
 
@@ -36,7 +37,8 @@ async def test_location_repository(test_user_entity: User, container: Container)
 
     with pytest.raises(LocationNotFoundException):
         await location_repository.get_location_by_name(
-            test_user_entity, location_1.name,
+            test_user_entity,
+            location_1.name,
         )
 
     await location_repository.delete_location_by_name(test_user_entity, location_2.name)

@@ -11,7 +11,6 @@ async def test_api_add_user_request(
     auth_client: TestClient,
     base_auth_service_url: str,
 ):
-
     response: Response = auth_client.post(
         f"{base_auth_service_url}/{users_prefix}",
         json=test_user_data,

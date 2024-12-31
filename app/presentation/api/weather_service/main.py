@@ -6,6 +6,7 @@ import uvicorn
 from presentation.api.lifespan import lifespan
 from presentation.api.weather_service.location.router import router as location_router
 from presentation.api.weather_service.weather.router import router as weather_router
+from settings.config import config
 
 
 def create_app() -> FastAPI:
@@ -40,8 +41,8 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:create_app",
         factory=True,
-        host="0.0.0.0",
-        port=8000,
+        host=config.WEATHER_SERIVCE_API_HOST,
+        port=config.WEATHER_SERIVCE_API_PORT,
         log_level="debug",
         reload=True,
         workers=1,

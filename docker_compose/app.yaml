@@ -1,12 +1,26 @@
 services:
-  main-app:
-    container_name: main-app
+  auth_service_app:
+    container_name: auth_service_app
     build:
       context: ..
       dockerfile: Dockerfile
-    command: "uvicorn --factory presentation.api.main:create_app --reload --host 0.0.0.0 --port 8000"
+    command: "uvicorn --factory presentation.api.auth_service.main:create_app --reload --host 0.0.0.0 --port 8000"
     ports:
-      - '${API_PORT}:8000'
+      - '${AUTH_SERIVCE_API_PORT}:8000'
+    volumes:
+      - ../app/:/app
+    env_file:
+      - ../.env
+    networks:
+      - backend
+  weather_service_app:
+    container_name: weather_service_app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: "uvicorn --factory presentation.api.weather_service.main:create_app --reload --host 0.0.0.0 --port 8000"
+    ports:
+      - '${WEATHER_SERIVCE_API_PORT}:8000'
     volumes:
       - ../app/:/app
     env_file:
@@ -20,8 +34,6 @@ services:
       dockerfile: Dockerfile
     command: >
       celery -A infrastructure.task_queue.init worker --loglevel=info
-    depends_on:
-      - redis
     env_file:
       - ../.env
     networks:

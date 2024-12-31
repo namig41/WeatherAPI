@@ -8,15 +8,41 @@ from httpx import Response
 async def test_api_add_location_request(
     test_location_data: dict,
     locations_prefix: str,
-    weather_client: TestClient,
+    auth_prefix: str,
+    users_prefix: str,
     base_weather_service_url: str,
+    base_auth_service_url: str,
+    test_user_data: dict,
+    auth_client: TestClient,
+    weather_client: TestClient,
 ):
-    response: Response = weather_client.post(
-        f"{base_weather_service_url}/{locations_prefix}",
-        json=test_location_data,
+    add_user_response: Response = auth_client.post(
+        f"{base_auth_service_url}/{users_prefix}",
+        json=test_user_data,
     )
 
-    assert response.is_success
+    assert add_user_response.status_code == 201
+
+    auth_response: Response = auth_client.post(
+        f"{base_auth_service_url}/{auth_prefix}/login",
+        data={
+            "username": test_user_data["login"],
+            "password": test_user_data["password"],
+        },
+    )
+    assert auth_response.status_code == 200
+    token: str = auth_response.json().get("access_token")
+    assert token is not None
+
+    headers: dict = {"Authorization": f"Bearer {token}"}
+    location_add_response = weather_client.post(
+        f"{base_weather_service_url}/{locations_prefix}",
+        json=test_location_data,
+        headers=headers,
+    )
+
+    assert location_add_response.status_code == 200
+    assert location_add_response.json()["status"] == "success"
 
 
 @pytest.mark.asyncio

@@ -4,24 +4,23 @@ from fastapi.testclient import TestClient
 import pytest
 
 from bootstrap.di import init_container
-from presentation.api.main import create_app
+from presentation.api.auth_service.main import create_app as create_auth_service_app
+from presentation.api.weather_service.main import create_app as create_weather_service_app
 from settings.config import config
 from tests.fixtures import init_dummy_container
 
 
 @pytest.fixture(scope="session")
 def app_auth_service() -> FastAPI:
-    app: FastAPI = create_app()
+    app: FastAPI = create_auth_service_app()
     app.dependency_overrides[init_container] = init_dummy_container
-
     return app
 
 
 @pytest.fixture(scope="session")
 def app_weather_service() -> FastAPI:
-    app: FastAPI = create_app()
+    app: FastAPI = create_weather_service_app()
     app.dependency_overrides[init_container] = init_dummy_container
-
     return app
 
 
@@ -46,13 +45,13 @@ def base_auth_service_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def base_url() -> str:
-    return f"http://{config.AUTH_SERIVCE_API_HOST}:{config.AUTH_SERIVCE_API_PORT}"
+def users_prefix() -> str:
+    return "users"
 
 
 @pytest.fixture(scope="session")
-def users_prefix() -> str:
-    return "users"
+def auth_prefix() -> str:
+    return "auth"
 
 
 @pytest.fixture(scope="session")

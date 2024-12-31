@@ -44,7 +44,7 @@ class LoginUserInteractor(Interactor[LoginUserRequestSchema, AccessTokenDTO]):
         access_token: AccessToken = AccessToken.create_with_expiration(payload)
         jwt_token: JWTToken = self.access_token_processor.encode(access_token)
 
-        send_user_authorization_email.delay(
+        await send_user_authorization_email(
             user,
             self.confirmation_email_config.create(EmailMessageType.AUTHORIZATION),
             self.email_service,
