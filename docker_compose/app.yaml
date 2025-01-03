@@ -34,6 +34,8 @@ services:
       dockerfile: Dockerfile
     command: >
       celery -A infrastructure.task_queue.init worker --loglevel=info
+    volumes:
+      - ../app/:/app
     env_file:
       - ../.env
     networks:

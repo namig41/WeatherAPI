@@ -3,12 +3,12 @@ SERVICE_NAME = main-app
 APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
 CACHE_FILE = docker_compose/cache.yaml
+ENV = --env-file .env
 
 # === API Section ===
-
 .PHONY: app
 app-start:
-	${DC} -f ${APP_FILE} up -d
+	${DC} -f ${APP_FILE} ${ENV} up --build -d
 
 .PHONY: app-drop
 app-drop:
@@ -58,7 +58,6 @@ cache-rebuild:
 	${DC} -f ${CACHE_FILE} build --no-cache
 
 # === All Project ===
-
 .PHONY: all
 all:
 	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} ${ENV} up --build -d

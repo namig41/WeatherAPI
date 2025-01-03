@@ -6,15 +6,14 @@ from fastapi import (
     HTTPException,
     status,
 )
-from fastapi.security import OAuth2PasswordBearer
 
 from punq import Container
 
+from application.common.auth_decorator import validate_token_decorator
 from bootstrap.di import init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from infrastructure.auth.access_service_api import AuthServiceAPI
 from infrastructure.repository.base import BaseUserLocationRepository
 from presentation.api.weather_service.location.schema import (
     AddNewLocationRequestSchema,
@@ -24,7 +23,6 @@ from presentation.api.weather_service.location.schema import (
 
 
 router = APIRouter(prefix="/locations", tags=["Location"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 @router.get(
@@ -33,14 +31,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
     response_model=LocationsResponseSchema,
     description="Получение всех локаций",
 )
+@validate_token_decorator
 async def get_all_location(
-    token: str = Depends(oauth2_scheme),
+    user: User,
     container: Container = Depends(init_container),
 ) -> LocationsResponseSchema:
     try:
-        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
-        user: User = await auth_service_api.validate_token(token)
-
         location_repository: BaseUserLocationRepository = container.resolve(
             BaseUserLocationRepository,
         )
@@ -59,20 +55,18 @@ async def get_all_location(
     response_model=LocationResponseSchema,
     description="Получение локации по имени",
 )
+@validate_token_decorator
 async def get_location(
     name: str,
-    token: str = Depends(oauth2_scheme),
+    user: User,
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
-        user: User = await auth_service_api.validate_token(token)
-
         location_repository: BaseUserLocationRepository = container.resolve(
             BaseUserLocationRepository,
         )
         location: Location = await location_repository.get_location_by_name(
-            user,
+            user=user,
             name=name,
         )
     except ApplicationException as exception:
@@ -89,15 +83,13 @@ async def get_location(
     response_model=LocationResponseSchema,
     description="Добавление новой локации",
 )
+@validate_token_decorator
 async def add_location(
     location_data: AddNewLocationRequestSchema,
-    token: str = Depends(oauth2_scheme),
+    user: User,
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
-        user: User = await auth_service_api.validate_token(token)
-
         location_repository: BaseUserLocationRepository = container.resolve(
             BaseUserLocationRepository,
         )
@@ -120,15 +112,13 @@ async def add_location(
     status_code=status.HTTP_204_NO_CONTENT,
     description="Добавление новой локации",
 )
+@validate_token_decorator
 async def delete_location(
     location_name: str,
-    token: str = Depends(oauth2_scheme),
+    user: User,
     container: Container = Depends(init_container),
 ) -> None:
     try:
-        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
-        user: User = await auth_service_api.validate_token(token)
-
         location_repository: BaseUserLocationRepository = container.resolve(
             BaseUserLocationRepository,
         )
