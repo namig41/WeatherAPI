@@ -42,5 +42,4 @@ async def test_location_repository(test_user_entity: User, container: Container)
         )
 
     await location_repository.delete_location_by_name(test_user_entity, location_2.name)
-
     await users_repository.delete_user_by_login(test_user_entity.login)

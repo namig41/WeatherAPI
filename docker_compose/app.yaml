@@ -40,6 +40,20 @@ services:
       - ../.env
     networks:
       - backend
+  tests:
+    container_name: test_app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+    volumes:
+      - ../app/:/app
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_TEST_DB}
+    networks:
+      - backend
 
 networks:
   backend:
