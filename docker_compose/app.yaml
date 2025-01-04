@@ -1,3 +1,4 @@
+version: '3.9'
 services:
   auth_service_app:
     container_name: auth_service_app
@@ -21,6 +22,20 @@ services:
     command: "uvicorn --factory presentation.api.weather_service.main:create_app --reload --host 0.0.0.0 --port 8000"
     ports:
       - '${WEATHER_SERIVCE_API_PORT}:8000'
+    volumes:
+      - ../app/:/app
+    env_file:
+      - ../.env
+    networks:
+      - backend
+  static_service_app:
+    container_name: static_service_app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: "uvicorn --factory presentation.api.static_service.main:create_app --reload --host 0.0.0.0 --port 8000"
+    ports:
+      - '${STATIC_SERIVCE_API_PORT}:8000'
     volumes:
       - ../app/:/app
     env_file:

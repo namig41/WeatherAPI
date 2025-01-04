@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     WEATHER_SERIVCE_API_HOST: str
     WEATHER_SERIVCE_API_PORT: int
 
+    STATIC_SERIVCE_API_HOST: str
+    STATIC_SERIVCE_API_PORT: int
+
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_TEST_DB: str

@@ -3,6 +3,7 @@ SERVICE_NAME = main-app
 APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
 CACHE_FILE = docker_compose/cache.yaml
+WEBSERVER_FILE = docker_compose/web_server.yaml
 ENV = --env-file .env
 
 # === API Section ===
@@ -57,15 +58,28 @@ cache-drop:
 cache-rebuild:
 	${DC} -f ${CACHE_FILE} build --no-cache
 
+# === Web Server Section ===
+.PHONY: webserver-start
+webserver-start:
+	${DC} -f ${WEBSERVER_FILE} up -d
+
+.PHONY: webserver-drop
+webserver-drop:
+	${DC} -f ${WEBSERVER_FILE} down
+
+.PHONY: webserver-remove
+webserver-rebuild:
+	${DC} -f ${WEBSERVER_FILE} build --no-cache
+
 # === All Project ===
 .PHONY: all
 all:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} ${ENV} up --build -d
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} -f ${WEBSERVER_FILE} ${ENV} up --build -d
 
 .PHONY: all-drop
 all-drop:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} down
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE}  ${WEBSERVER_FILE} down
 
 .PHONY: all-remove
 all-remove:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} rm -f
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE}  ${WEBSERVER_FILE} rm -f

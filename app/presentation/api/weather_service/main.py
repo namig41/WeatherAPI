@@ -37,7 +37,6 @@ def create_app() -> FastAPI:
 
 
 if __name__ == "__main__":
-
     uvicorn.run(
         "main:create_app",
         factory=True,
