@@ -7,6 +7,8 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordBearer
 
+from punq import Container
+
 from bootstrap.di import init_container
 from domain.exceptions.base import ApplicationException
 from infrastructure.auth.access_service_api import AuthServiceAPI
@@ -20,7 +22,7 @@ def validate_token_decorator(func):
     async def wrapper(
         *args,
         token: str = Depends(oauth2_scheme),
-        container=Depends(init_container),
+        container: Container = Depends(init_container),
         **kwargs,
     ):
         auth_service_api = container.resolve(AuthServiceAPI)
