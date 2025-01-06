@@ -4,7 +4,7 @@ from fastapi import (
 )
 from fastapi.responses import HTMLResponse
 
-from presentation.api.static_service.jinja_config import templates
+from presentation.api.static_service.v1.jinja_config import templates
 
 
 router = APIRouter()

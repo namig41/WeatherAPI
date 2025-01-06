@@ -4,8 +4,8 @@ from fastapi.testclient import TestClient
 import pytest
 
 from bootstrap.di import init_container
-from presentation.api.auth_service.main import create_app as create_auth_service_app
-from presentation.api.weather_service.main import create_app as create_weather_service_app
+from presentation.api.auth_service.v1.main import create_app as create_auth_service_app
+from presentation.api.weather_service.v1.main import create_app as create_weather_service_app
 from settings.config import config
 from tests.fixtures import init_dummy_container
 
