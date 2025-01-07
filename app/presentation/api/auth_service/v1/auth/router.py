@@ -21,7 +21,7 @@ from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.jwt.access_token import JWTToken
-from presentation.api.auth_service.auth.schema import (
+from presentation.api.auth_service.v1.auth.schema import (
     GetMeResponseSchema,
     LoginUserRequestSchema,
 )

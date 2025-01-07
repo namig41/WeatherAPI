@@ -5,8 +5,8 @@ from fastapi.staticfiles import StaticFiles
 
 import uvicorn
 
-from presentation.api.static_service.auth.router import router as auth_view_router
-from presentation.api.static_service.root.router import router as main_view_router
+from presentation.api.static_service.v1.auth.router import router as auth_view_router
+from presentation.api.static_service.v1.root.router import router as main_view_router
 from settings.config import config
 
 

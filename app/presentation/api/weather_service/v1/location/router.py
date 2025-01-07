@@ -9,7 +9,7 @@ from fastapi import (
 
 from punq import Container
 
-from application.common.auth_decorator import validate_token_decorator
+from app.application.auth.auth_decorator import validate_token_decorator
 from bootstrap.di import init_container
 from domain.entities.location import Location
 from domain.entities.user import User

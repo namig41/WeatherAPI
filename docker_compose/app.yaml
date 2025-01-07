@@ -5,7 +5,7 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-    command: "uvicorn --factory presentation.api.auth_service.main:create_app --reload --host 0.0.0.0 --port 8000"
+    command: "uvicorn --factory presentation.api.auth_service.v1.main:create_app --reload --host 0.0.0.0 --port 8000"
     ports:
       - '${AUTH_SERIVCE_API_PORT}:8000'
     volumes:
@@ -19,7 +19,7 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-    command: "uvicorn --factory presentation.api.weather_service.main:create_app --reload --host 0.0.0.0 --port 8000"
+    command: "uvicorn --factory presentation.api.weather_service.v1.main:create_app --reload --host 0.0.0.0 --port 8000"
     ports:
       - '${WEATHER_SERIVCE_API_PORT}:8000'
     volumes:
@@ -33,7 +33,7 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-    command: "uvicorn --factory presentation.api.static_service.main:create_app --reload --host 0.0.0.0 --port 8000"
+    command: "uvicorn --factory presentation.api.static_service.v1.main:create_app --reload --host 0.0.0.0 --port 8000"
     ports:
       - '${STATIC_SERIVCE_API_PORT}:8000'
     volumes:

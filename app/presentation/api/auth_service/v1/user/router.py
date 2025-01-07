@@ -14,7 +14,7 @@ from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.repository.base import BaseUserRepository
-from presentation.api.auth_service.user.schema import (
+from presentation.api.auth_service.v1.user.schema import (
     AddNewUserRequestSchema,
     GetUserResponseSchema,
     GetUsersResponseSchema,

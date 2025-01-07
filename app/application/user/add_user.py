@@ -9,7 +9,7 @@ from infrastructure.email.base import IEmailClientService
 from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.repository.base import BaseUserRepository
 from infrastructure.task_queue.email_tasks.user import send_user_confirmation_email
-from presentation.api.auth_service.user.schema import AddNewUserRequestSchema
+from presentation.api.auth_service.v1.user.schema import AddNewUserRequestSchema
 
 
 @dataclass
