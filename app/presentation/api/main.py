@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from presentation.api.auth_service.v1.auth.router import router as auth_router
-from presentation.api.auth_service.v1.user.router import router as user_router
 from presentation.api.auth_service.v1.lifespan import lifespan
+from presentation.api.auth_service.v1.user.router import router as user_router
 from presentation.api.weather_service.v1.location.router import router as location_router
 from presentation.api.weather_service.v1.weather.router import router as weather_router
 from settings.config import config
@@ -20,8 +20,7 @@ def create_app() -> FastAPI:
     )
 
     origins = [
-        "http://localhost:8000",
-        "http://localhost",
+        "*",
     ]
 
     app.add_middleware(

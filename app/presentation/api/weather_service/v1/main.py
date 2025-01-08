@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from presentation.api.lifespan import lifespan
+from presentation.api.weather_service.v1.healthcheck import router as healthcheck_router
 from presentation.api.weather_service.v1.location.router import router as location_router
 from presentation.api.weather_service.v1.weather.router import router as weather_router
 from settings.config import config
@@ -18,8 +19,8 @@ def create_app() -> FastAPI:
     )
 
     origins = [
-        "http://localhost:8000",
-        "http://localhost",
+        "*",
+        "http://myapi.local",
     ]
 
     app.add_middleware(
@@ -30,7 +31,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    app.include_router()
+    app.include_router(healthcheck_router)
     app.include_router(location_router)
     app.include_router(weather_router)
 

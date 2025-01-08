@@ -13,7 +13,7 @@ from bootstrap.di import init_container
 from domain.entities.weather import Weather
 from domain.exceptions.base import ApplicationException
 from infrastructure.auth.access_service_api import AuthServiceAPI
-from presentation.api.weather_service.weather.schema import WeatherResponseSchema
+from presentation.api.weather_service.v1.weather.schema import WeatherResponseSchema
 
 
 router = APIRouter(prefix="/weather", tags=["Weather"])

@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 
-from presentation.api.auth_service.auth.router import router as auth_router
-from presentation.api.auth_service.user.router import router as user_router
+from presentation.api.auth_service.v1.auth.router import router as auth_router
+from presentation.api.auth_service.v1.healthcheck import router as healthcheck_router
+from presentation.api.auth_service.v1.user.router import router as user_router
 from presentation.api.lifespan import lifespan
 from settings.config import config
 
@@ -18,8 +19,8 @@ def create_app() -> FastAPI:
     )
 
     origins = [
-        "http://localhost:8000",
-        "http://localhost",
+        "*",
+        "http://myapi.local",
     ]
 
     app.add_middleware(
@@ -30,6 +31,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    app.include_router(healthcheck_router)
     app.include_router(user_router)
     app.include_router(auth_router)
 

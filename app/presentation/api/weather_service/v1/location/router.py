@@ -9,13 +9,13 @@ from fastapi import (
 
 from punq import Container
 
-from app.application.auth.auth_decorator import validate_token_decorator
+from application.auth.auth_decorator import validate_token_decorator
 from bootstrap.di import init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.repository.base import BaseUserLocationRepository
-from presentation.api.weather_service.location.schema import (
+from presentation.api.weather_service.v1.location.schema import (
     AddNewLocationRequestSchema,
     LocationResponseSchema,
     LocationsResponseSchema,

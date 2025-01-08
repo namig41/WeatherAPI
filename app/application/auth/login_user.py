@@ -18,7 +18,7 @@ from infrastructure.jwt.access_token import (
     JWTToken,
 )
 from infrastructure.repository.base import BaseUserRepository
-from presentation.api.auth_service.auth.schema import LoginUserRequestSchema
+from presentation.api.auth_service.v1.auth.schema import LoginUserRequestSchema
 
 
 @dataclass

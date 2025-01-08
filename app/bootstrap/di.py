@@ -56,8 +56,8 @@ from infrastructure.repository.postgres import (
 from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.open_weather_api import OpenWeatherAPIService
-from presentation.api.auth_service.auth.schema import LoginUserRequestSchema
-from presentation.api.auth_service.user.schema import AddNewUserRequestSchema
+from presentation.api.auth_service.v1.auth.schema import LoginUserRequestSchema
+from presentation.api.auth_service.v1.user.schema import AddNewUserRequestSchema
 from settings.config import (
     config,
     Settings,
