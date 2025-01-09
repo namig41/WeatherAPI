@@ -7,6 +7,7 @@ from typing import Iterable
 
 from domain.entities.location import Location
 from domain.entities.user import User
+from infrastructure.repository.filters import RepositoryFilters
 
 
 @dataclass
@@ -22,7 +23,7 @@ class BaseUserRepository(ABC):
     async def get_user_by_login(self, login: str) -> User: ...
 
     @abstractmethod
-    async def get_all_user(self) -> Iterable[User]: ...
+    async def get_all_user(self, filters: RepositoryFilters) -> Iterable[User]: ...
 
     @abstractmethod
     async def delete_user_by_login(self, login: str) -> None: ...
@@ -38,7 +39,9 @@ class BaseUserLocationRepository(ABC):
     async def get_location_by_name(self, user: User, name: str) -> Location: ...
 
     @abstractmethod
-    async def get_all_location(self, user: User) -> Iterable[Location]: ...
+    async def get_all_location(
+        self, user: User, filters: RepositoryFilters,
+    ) -> Iterable[Location]: ...
 
     @abstractmethod
     async def delete_location_by_name(self, user: User, name: str) -> None: ...

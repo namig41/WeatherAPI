@@ -1,14 +1,16 @@
 from dataclasses import dataclass
+
 import aio_pika
 from aio_pika.abc import AbstractRobustConnection
 from aio_pika.pool import Pool
 
 from .config import EventBusConfig
 
+
 @dataclass
 class ConnectionFactory:
     config: EventBusConfig
-    
+
     async def get_connection(self) -> AbstractRobustConnection:
         return await aio_pika.connect_robust(
             host=self.config.host,
@@ -16,6 +18,7 @@ class ConnectionFactory:
             login=self.config.login,
             password=self.config.password,
         )
+
 
 @dataclass
 class ChannelFactory:

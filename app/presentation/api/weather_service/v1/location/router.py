@@ -15,6 +15,7 @@ from domain.entities.location import Location
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.repository.base import BaseUserLocationRepository
+from presentation.api.common.filters import FiltersSchema
 from presentation.api.weather_service.v1.location.schema import (
     AddNewLocationRequestSchema,
     LocationResponseSchema,
@@ -34,13 +35,16 @@ router = APIRouter(prefix="/locations", tags=["Location"])
 @validate_token_decorator
 async def get_all_location(
     user: User,
+    filters_schema: FiltersSchema = Depends(),
     container: Container = Depends(init_container),
 ) -> LocationsResponseSchema:
     try:
         location_repository: BaseUserLocationRepository = container.resolve(
             BaseUserLocationRepository,
         )
-        locations: Iterable[Location] = await location_repository.get_all_location(user)
+        locations: Iterable[Location] = await location_repository.get_all_location(
+            user, filters_schema.to_repository_filters(),
+        )
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -17,7 +17,7 @@ app-start:
 app-drop:
 	${DC} -f ${APP_FILE} down
 
-.PHONY: app-remove
+.PHONY: app-rebuild
 app-rebuild:
 	${DC} -f ${APP_FILE} build --no-cache
 

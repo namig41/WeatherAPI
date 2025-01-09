@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
-from fastapi import APIRouter, status
+from fastapi import (
+    APIRouter,
+    status,
+)
+
 
 router = APIRouter(
     prefix="/ping",

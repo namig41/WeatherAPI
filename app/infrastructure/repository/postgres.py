@@ -19,6 +19,7 @@ from infrastructure.repository.base import (
     BaseUserLocationRepository,
     BaseUserRepository,
 )
+from infrastructure.repository.filters import RepositoryFilters
 
 
 @dataclass
@@ -49,9 +50,9 @@ class PostgreSQLUserRepository(BaseUserRepository):
 
             return user
 
-    async def get_all_user(self) -> Iterable[User]:
+    async def get_all_user(self, filters: RepositoryFilters) -> Iterable[User]:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
-            query = select(User)
+            query = select(User).offset(filters.offset).limit(filters.limit)
             result = await session.scalars(query)
             users: Iterable[User] = result.all()
             return users
@@ -88,9 +89,16 @@ class PostgreSQLUserLocationRepository(BaseUserLocationRepository):
 
             return location
 
-    async def get_all_location(self, user: User) -> Iterable[Location]:
+    async def get_all_location(
+        self, user: User, filters: RepositoryFilters,
+    ) -> Iterable[Location]:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
-            query = select(Location).where(Location.user_id == user.id)
+            query = (
+                select(Location)
+                .where(Location.user_id == user.id)
+                .offset(filters.offset)
+                .limit(filters.limit)
+            )
             result = await session.scalars(query)
             locations: Iterable[Location] = result.all()
             return locations
