@@ -29,8 +29,6 @@ aioredis = "^2.0.1"
 celery = {extras = ["redis"], version = "^5.4.0"}
 aiosmtplib = "^3.0.2"
 email-validator = "^2.2.0"
-qredis = "^1.1.0"
-aiogram = "^3.16.0"
 pyjwt = "^2.10.1"
 python-multipart = "^0.0.20"
 flower = "^2.0.1"
