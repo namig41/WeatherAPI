@@ -4,6 +4,8 @@ APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
 CACHE_FILE = docker_compose/cache.yaml
 WEBSERVER_FILE = docker_compose/web_server.yaml
+MIGRATION_SERVICE = migrations_service
+EXEC = docker exec -it
 ENV = --env-file .env
 
 # === API Section ===
@@ -70,6 +72,28 @@ webserver-drop:
 .PHONY: webserver-remove
 webserver-rebuild:
 	${DC} -f ${WEBSERVER_FILE} build --no-cache
+
+# === Migrations ===
+.PHONY: migrations
+migrations:
+	${EXEC} ${MIGRATION_SERVICE} alembic upgrade head
+
+.PHONY: create-migration
+create-migration:
+	${EXEC} ${MIGRATION_SERVICE} alembic revision --autogenerate -m "create migration"
+
+.PHONY: downgrade
+downgrade:
+	${EXEC} ${MIGRATION_SERVICE} alembic downgrade -1
+
+.PHONY: upgrade
+upgrade:
+	${EXEC} ${MIGRATION_SERVICE} alembic upgrade head
+
+.PHONY: db-reset
+db-reset:
+	${EXEC} ${MIGRATION_SERVICE} alembic downgrade base
+	${EXEC} ${MIGRATION_SERVICE} alembic upgrade head
 
 # === All Project ===
 .PHONY: all

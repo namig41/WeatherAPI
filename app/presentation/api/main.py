@@ -44,8 +44,8 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:create_app",
         factory=True,
-        host=config.WEATHER_SERIVCE_API_HOST,
-        port=config.WEATHER_SERIVCE_API_PORT,
+        host=config.WEATHER_SERVICE_API_HOST,
+        port=config.WEATHER_SERVICE_API_PORT,
         log_level="debug",
         reload=True,
         workers=1,

@@ -47,8 +47,8 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:create_app",
         factory=True,
-        host=config.STATIC_SERIVCE_API_HOST,
-        port=config.STATIC_SERIVCE_API_PORT,
+        host=config.STATIC_SERVICE_API_HOST,
+        port=config.STATIC_SERVICE_API_PORT,
         log_level="debug",
         reload=True,
         workers=1,

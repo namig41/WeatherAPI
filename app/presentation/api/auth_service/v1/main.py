@@ -43,8 +43,8 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:create_app",
         factory=True,
-        host=config.AUTH_SERIVCE_API_HOST,
-        port=config.AUTH_SERIVCE_API_PORT,
+        host=config.AUTH_SERVICE_API_HOST,
+        port=config.AUTH_SERVICE_API_PORT,
         log_level="debug",
         reload=True,
         workers=1,
