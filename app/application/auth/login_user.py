@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from application.auth.dto import AccessTokenDTO
 from application.common.interactor import Interactor
+from application.user.dto import UserDataDTO
 from domain.entities.user import User
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.value_objects.raw_password import RawPassword
@@ -18,11 +19,10 @@ from infrastructure.jwt.access_token import (
     JWTToken,
 )
 from infrastructure.repository.base import BaseUserRepository
-from presentation.api.auth_service.v1.auth.schema import LoginUserRequestSchema
 
 
 @dataclass
-class LoginUserInteractor(Interactor[LoginUserRequestSchema, AccessTokenDTO]):
+class LoginUserInteractor(Interactor[UserDataDTO, AccessTokenDTO]):
 
     auth_access_service: IAuthAccessService
     access_token_processor: AccessTokenProcessor
@@ -30,16 +30,16 @@ class LoginUserInteractor(Interactor[LoginUserRequestSchema, AccessTokenDTO]):
     email_service: IEmailClientService
     confirmation_email_config: ConfirmationEmailConfigFactory
 
-    async def __call__(self, data: LoginUserRequestSchema) -> AccessTokenDTO:
+    async def __call__(self, user_dto: UserDataDTO) -> AccessTokenDTO:
         await self.auth_access_service.authorize(
-            data.login,
-            RawPassword(data.password),
+            login=user_dto.login,
+            raw_password=RawPassword(user_dto.password),
         )
 
-        user: User = await self.users_repository.get_user_by_login(data.login)
+        user: User = await self.users_repository.get_user_by_login(user_dto.login)
 
         payload: JWTPayload = JWTPayload.from_dict(
-            {"user_id": user.id, "login": data.login},
+            {"user_id": user.id, "login": user_dto.login},
         )
         access_token: AccessToken = AccessToken.create_with_expiration(payload)
         jwt_token: JWTToken = self.access_token_processor.encode(access_token)

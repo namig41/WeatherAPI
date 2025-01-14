@@ -12,10 +12,11 @@ from punq import Container
 from application.user.add_user import AddUserInteractor
 from application.user.delete_user import DeleteUserInteractor
 from application.user.dto import UserDataDTO
+from application.user.get_all_user import GetAllUserInteractor
+from application.user.get_user import GetUserInteractor
 from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from infrastructure.repository.base import BaseUserRepository
 from presentation.api.auth_service.v1.user.schema import (
     AddNewUserRequestSchema,
     GetUserResponseSchema,
@@ -38,8 +39,10 @@ async def get_all_user(
     container: Container = Depends(init_container),
 ) -> GetUsersResponseSchema:
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        users: Iterable[User] = await users_repository.get_all_user(
+        get_all_user_action: GetAllUserInteractor = container.resolve(
+            GetAllUserInteractor,
+        )
+        users: Iterable[User] = await get_all_user_action(
             filters_schema.to_repository_filters(),
         )
     except ApplicationException as exception:
@@ -61,8 +64,9 @@ async def get_user(
     container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        user: User = await users_repository.get_user_by_login(login=login)
+        user_dto: UserDataDTO = UserDataDTO(login=login)
+        get_user_action: GetUserInteractor = container.resolve(GetUserInteractor)
+        user: User = await get_user_action(user_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

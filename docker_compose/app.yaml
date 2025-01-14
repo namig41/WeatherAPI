@@ -84,6 +84,21 @@ services:
       - POSTGRES_DB=${POSTGRES_TEST_DB}
     networks:
       - backend
+  admin_service_app:
+    container_name: admin_service_app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: "uvicorn --factory presentation.admin.main:create_app  --reload --host 0.0.0.0 --port 8000"
+    ports:
+      - '${ADMIN_SERVICE_PORT}:8000'
+    volumes:
+      - ../app/:/app
+    env_file:
+      - ../.env
+    networks:
+      - backend
+
 
 networks:
   backend:

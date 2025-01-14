@@ -7,7 +7,7 @@ from punq import Container
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from domain.entities.user import User
-from infrastructure.database.models import (
+from infrastructure.database.utlis import (
     create_database,
     drop_database,
     start_entity_mappers,

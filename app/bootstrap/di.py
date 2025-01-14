@@ -11,15 +11,14 @@ from punq import (
 )
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
-from application.auth.dto import AccessTokenDTO
 from application.auth.login_user import LoginUserInteractor
 from application.auth.validate_token import ValidateTokenInteractor
 from application.common.interactor import Interactor
 from application.user.add_user import AddUserInteractor
 from application.user.delete_user import DeleteUserInteractor
+from application.user.get_all_user import GetAllUserInteractor
 from application.user.get_user import GetUserInteractor
 from application.weather.get_weather import GetWeatherInteractor
-from domain.entities.user import User
 from domain.entities.weather import Weather
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
@@ -41,7 +40,6 @@ from infrastructure.email.config import SMTPConfig
 from infrastructure.email.email_client import SMTPEmailClient
 from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.email.init import init_smtp_client
-from infrastructure.jwt.access_token import JWTToken
 from infrastructure.jwt.base import BaseJWTProcessor
 from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
@@ -58,7 +56,6 @@ from infrastructure.repository.postgres import (
 from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.open_weather_api import OpenWeatherAPIService
-from presentation.api.auth_service.v1.auth.schema import LoginUserRequestSchema
 from settings.config import (
     config,
     Settings,
@@ -193,27 +190,15 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    container.register(
-        Interactor[LoginUserRequestSchema, AccessTokenDTO],
-        LoginUserInteractor,
-    )
+    # AUTH UseCase
+    container.register(LoginUserInteractor)
+    container.register(ValidateTokenInteractor)
 
-    container.register(
-        Interactor[JWTToken, User],
-        ValidateTokenInteractor,
-    )
-
-    container.register(
-        AddUserInteractor,
-    )
-
-    container.register(
-        DeleteUserInteractor,
-    )
-
-    container.register(
-        GetUserInteractor,
-    )
+    # User UseCase
+    container.register(AddUserInteractor)
+    container.register(DeleteUserInteractor)
+    container.register(GetUserInteractor)
+    container.register(GetAllUserInteractor)
 
     container.register(
         Interactor[str, Weather],

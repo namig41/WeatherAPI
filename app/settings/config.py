@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     STATIC_SERVICE_API_HOST: str
     STATIC_SERVICE_API_PORT: int
 
+    ADMIN_SERVICE_HOST: str
+    ADMIN_SERVICE_PORT: int
+
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_TEST_DB: str

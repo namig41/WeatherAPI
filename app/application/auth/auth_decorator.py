@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordBearer
 from punq import Container
 
 from bootstrap.di import init_container
+from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.auth.access_service_api import AuthServiceAPI
 
@@ -25,9 +26,9 @@ def validate_token_decorator(func):
         container: Container = Depends(init_container),
         **kwargs,
     ):
-        auth_service_api = container.resolve(AuthServiceAPI)
+        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
         try:
-            user = await auth_service_api.validate_token(token)
+            user: User = await auth_service_api.validate_token(token)
         except ApplicationException as exception:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

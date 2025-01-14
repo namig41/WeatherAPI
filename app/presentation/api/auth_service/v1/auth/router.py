@@ -16,15 +16,14 @@ from fastapi.security import (
 from punq import Container
 
 from application.auth.dto import AccessTokenDTO
-from application.common.interactor import Interactor
+from application.auth.login_user import LoginUserInteractor
+from application.auth.validate_token import ValidateTokenInteractor
+from application.user.dto import UserDataDTO
 from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
 from infrastructure.jwt.access_token import JWTToken
-from presentation.api.auth_service.v1.auth.schema import (
-    GetMeResponseSchema,
-    LoginUserRequestSchema,
-)
+from presentation.api.auth_service.v1.auth.schema import GetMeResponseSchema
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -42,17 +41,12 @@ async def login_user(
     container: Container = Depends(init_container),
 ) -> AccessTokenDTO:
     try:
-        user_data: LoginUserRequestSchema = LoginUserRequestSchema(
+        user_data_dto: UserDataDTO = UserDataDTO(
             login=form_data.username,
             password=form_data.password,
         )
-
-        login_user_action: Interactor[LoginUserRequestSchema, AccessTokenDTO] = (
-            container.resolve(
-                Interactor[LoginUserRequestSchema, AccessTokenDTO],
-            )
-        )
-        access_token: AccessTokenDTO = await login_user_action(user_data)
+        login_user_action: LoginUserInteractor = container.resolve(LoginUserInteractor)
+        access_token: AccessTokenDTO = await login_user_action(user_data_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -83,10 +77,11 @@ async def validate_token(
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:
     try:
-        validate_token_action: Interactor[JWTToken, User] = container.resolve(
-            Interactor[JWTToken, User],
+        access_token_dto: AccessTokenDTO = AccessTokenDTO(access_token=token)
+        validate_token_action: ValidateTokenInteractor = container.resolve(
+            ValidateTokenInteractor,
         )
-        user: User = await validate_token_action(token)
+        user: User = await validate_token_action(access_token_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

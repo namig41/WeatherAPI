@@ -6,11 +6,8 @@ from sqlalchemy import (
     String,
     Table,
 )
-from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.orm import registry
 
-from domain.entities.location import Location
-from domain.entities.user import User
 from infrastructure.database.custom_types import (
     HashedPasswordType,
     UserEmailType,
@@ -38,18 +35,3 @@ locations = Table(
     Column("latitude", Float),
     Column("longitude", Float),
 )
-
-
-def start_entity_mappers() -> None:
-    mapper_registry.map_imperatively(User, users)
-    mapper_registry.map_imperatively(Location, locations)
-
-
-async def create_database(engine: AsyncEngine) -> None:
-    async with engine.begin() as connection:
-        await connection.run_sync(metadata.create_all)
-
-
-async def drop_database(engine: AsyncEngine) -> None:
-    async with engine.begin() as connection:
-        await connection.run_sync(metadata.drop_all)

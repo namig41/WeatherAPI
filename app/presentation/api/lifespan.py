@@ -6,7 +6,7 @@ from punq import Container
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from bootstrap.di import init_container
-from infrastructure.database.models import (
+from infrastructure.database.utlis import (
     create_database,
     start_entity_mappers,
 )
