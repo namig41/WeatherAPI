@@ -43,7 +43,8 @@ async def get_all_location(
             BaseUserLocationRepository,
         )
         locations: Iterable[Location] = await location_repository.get_all_location(
-            user, filters_schema.to_repository_filters(),
+            user,
+            filters_schema.to_repository_filters(),
         )
     except ApplicationException as exception:
         raise HTTPException(

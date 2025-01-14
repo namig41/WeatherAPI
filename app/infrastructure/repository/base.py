@@ -40,7 +40,9 @@ class BaseUserLocationRepository(ABC):
 
     @abstractmethod
     async def get_all_location(
-        self, user: User, filters: RepositoryFilters,
+        self,
+        user: User,
+        filters: RepositoryFilters,
     ) -> Iterable[Location]: ...
 
     @abstractmethod

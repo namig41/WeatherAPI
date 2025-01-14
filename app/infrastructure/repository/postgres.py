@@ -90,7 +90,9 @@ class PostgreSQLUserLocationRepository(BaseUserLocationRepository):
             return location
 
     async def get_all_location(
-        self, user: User, filters: RepositoryFilters,
+        self,
+        user: User,
+        filters: RepositoryFilters,
     ) -> Iterable[Location]:
         async with AsyncSession(self.engine, expire_on_commit=False) as session:
             query = (

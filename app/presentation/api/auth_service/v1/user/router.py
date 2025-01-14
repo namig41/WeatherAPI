@@ -9,7 +9,9 @@ from fastapi import (
 
 from punq import Container
 
-from application.common.interactor import Interactor
+from application.user.add_user import AddUserInteractor
+from application.user.delete_user import DeleteUserInteractor
+from application.user.dto import UserDataDTO
 from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
@@ -80,10 +82,13 @@ async def add_user(
     container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
-        add_user_action: Interactor[AddNewUserRequestSchema, User] = container.resolve(
-            Interactor[AddNewUserRequestSchema, User],
+        user_dto: UserDataDTO = UserDataDTO(
+            login=user_data.login,
+            email=user_data.email,
+            password=user_data.password,
         )
-        user: User = await add_user_action(user_data)
+        add_user_action: AddUserInteractor = container.resolve(AddUserInteractor)
+        user: User = await add_user_action(user_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -102,8 +107,11 @@ async def delete_user(
     container: Container = Depends(init_container),
 ) -> None:
     try:
-        users_repository: BaseUserRepository = container.resolve(BaseUserRepository)
-        await users_repository.delete_user_by_login(login=login)
+        user_dto: UserDataDTO = UserDataDTO(login=login)
+        user_delete_action: DeleteUserInteractor = container.resolve(
+            DeleteUserInteractor,
+        )
+        await user_delete_action(user_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

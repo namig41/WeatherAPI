@@ -35,8 +35,6 @@ async def setup_before_all_tests(container: Container, faker: Faker) -> None:
     faker.seed_instance(random_seed)
 
     engine: AsyncEngine = container.resolve(AsyncEngine)
-    connection = engine.connect()
-    connection.execute("CREATE DATABASE {db_config.DB_NAME}")
     await drop_database(engine)
     await create_database(engine)
     start_entity_mappers()

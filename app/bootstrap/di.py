@@ -16,6 +16,8 @@ from application.auth.login_user import LoginUserInteractor
 from application.auth.validate_token import ValidateTokenInteractor
 from application.common.interactor import Interactor
 from application.user.add_user import AddUserInteractor
+from application.user.delete_user import DeleteUserInteractor
+from application.user.get_user import GetUserInteractor
 from application.weather.get_weather import GetWeatherInteractor
 from domain.entities.user import User
 from domain.entities.weather import Weather
@@ -57,7 +59,6 @@ from infrastructure.weather.base import IWeatherAPIService
 from infrastructure.weather.config import WeatherAPIConfig
 from infrastructure.weather.open_weather_api import OpenWeatherAPIService
 from presentation.api.auth_service.v1.auth.schema import LoginUserRequestSchema
-from presentation.api.auth_service.v1.user.schema import AddNewUserRequestSchema
 from settings.config import (
     config,
     Settings,
@@ -203,8 +204,15 @@ def _init_container() -> Container:
     )
 
     container.register(
-        Interactor[AddNewUserRequestSchema, User],
         AddUserInteractor,
+    )
+
+    container.register(
+        DeleteUserInteractor,
+    )
+
+    container.register(
+        GetUserInteractor,
     )
 
     container.register(
