@@ -10,6 +10,10 @@ from fastapi import (
 from punq import Container
 
 from application.auth.auth_decorator import validate_token_decorator
+from application.location.add_location import AddLocationInteractor
+from application.location.delete_location import DeleteLocationInteractor
+from application.location.dto import LocationDTO
+from application.location.get_location import GetLocationInteractor
 from bootstrap.di import init_container
 from domain.entities.location import Location
 from domain.entities.user import User
@@ -67,13 +71,15 @@ async def get_location(
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        location_repository: BaseUserLocationRepository = container.resolve(
-            BaseUserLocationRepository,
-        )
-        location: Location = await location_repository.get_location_by_name(
-            user=user,
+        location_dto: LocationDTO = LocationDTO(
             name=name,
+            user=user,
         )
+
+        get_location_action: GetLocationInteractor = container.resolve(
+            GetLocationInteractor,
+        )
+        location: Location = await get_location_action(location_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -95,15 +101,17 @@ async def add_location(
     container: Container = Depends(init_container),
 ) -> LocationResponseSchema:
     try:
-        location_repository: BaseUserLocationRepository = container.resolve(
-            BaseUserLocationRepository,
+        location_dto: LocationDTO = LocationDTO(
+            name=location_data.name,
+            latitude=location_data.latitude,
+            longitude=location_data.latitude,
+            user=user,
         )
-        location: Location = Location(
-            location_data.name,
-            location_data.latitude,
-            location_data.longitude,
+
+        add_location_action: AddLocationInteractor = container.resolve(
+            AddLocationInteractor,
         )
-        await location_repository.add_location(user, location)
+        location: Location = await add_location_action(location_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -115,7 +123,7 @@ async def add_location(
 @router.delete(
     "/",
     status_code=status.HTTP_204_NO_CONTENT,
-    description="Добавление новой локации",
+    description="Удаление локации",
 )
 @validate_token_decorator
 async def delete_location(
@@ -124,10 +132,15 @@ async def delete_location(
     container: Container = Depends(init_container),
 ) -> None:
     try:
-        location_repository: BaseUserLocationRepository = container.resolve(
-            BaseUserLocationRepository,
+        location_dto: LocationDTO = LocationDTO(
+            name=location_name,
+            user=user,
         )
-        await location_repository.delete_location_by_name(user=user, name=location_name)
+
+        delete_location_action: AddLocationInteractor = container.resolve(
+            DeleteLocationInteractor,
+        )
+        await delete_location_action(location_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

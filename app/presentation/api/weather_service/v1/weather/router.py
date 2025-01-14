@@ -4,20 +4,20 @@ from fastapi import (
     HTTPException,
     status,
 )
-from fastapi.security import OAuth2PasswordBearer
 
 from punq import Container
 
-from application.common.interactor import Interactor
+from application.auth.auth_decorator import validate_token_decorator
+from application.location.dto import LocationDTO
+from application.weather.get_weather import GetWeatherInteractor
 from bootstrap.di import init_container
+from domain.entities.user import User
 from domain.entities.weather import Weather
 from domain.exceptions.base import ApplicationException
-from infrastructure.auth.access_service_api import AuthServiceAPI
 from presentation.api.weather_service.v1.weather.schema import WeatherResponseSchema
 
 
 router = APIRouter(prefix="/weather", tags=["Weather"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 @router.get(
@@ -26,20 +26,21 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
     response_model=WeatherResponseSchema,
     description="Получение погоды по имени",
 )
+@validate_token_decorator
 async def get_weather_by_name(
     location_name: str,
-    token: str = Depends(oauth2_scheme),
+    user: User,
     container: Container = Depends(init_container),
 ) -> WeatherResponseSchema:
     try:
-        auth_service_api: AuthServiceAPI = container.resolve(AuthServiceAPI)
-        await auth_service_api.validate_token(token)
-
-        get_weather_action: Interactor[str, Weather] = container.resolve(
-            Interactor[str, Weather],
+        location_dto: LocationDTO = LocationDTO(
+            name=location_name,
+            user=user,
         )
-        weather: Weather = await get_weather_action(location_name)
-
+        get_weather_action: GetWeatherInteractor = container.resolve(
+            GetWeatherInteractor,
+        )
+        weather: Weather = await get_weather_action(location_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

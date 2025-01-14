@@ -13,13 +13,15 @@ from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from application.auth.login_user import LoginUserInteractor
 from application.auth.validate_token import ValidateTokenInteractor
-from application.common.interactor import Interactor
+from application.location.add_location import AddLocationInteractor
+from application.location.delete_location import DeleteLocationInteractor
+from application.location.get_all_location import GetAllLocationInteractor
+from application.location.get_location import GetLocationInteractor
 from application.user.add_user import AddUserInteractor
 from application.user.delete_user import DeleteUserInteractor
 from application.user.get_all_user import GetAllUserInteractor
 from application.user.get_user import GetUserInteractor
 from application.weather.get_weather import GetWeatherInteractor
-from domain.entities.weather import Weather
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from infrastructure.auth.access_service import PasswordAuthService
@@ -200,9 +202,12 @@ def _init_container() -> Container:
     container.register(GetUserInteractor)
     container.register(GetAllUserInteractor)
 
-    container.register(
-        Interactor[str, Weather],
-        GetWeatherInteractor,
-    )
+    # Location UseCase
+    container.register(AddLocationInteractor)
+    container.register(DeleteLocationInteractor)
+    container.register(GetLocationInteractor)
+    container.register(GetAllLocationInteractor)
 
+    # Weather UseCase
+    container.register(GetWeatherInteractor)
     return container
