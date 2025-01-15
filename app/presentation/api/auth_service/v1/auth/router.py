@@ -18,7 +18,7 @@ from punq import Container
 from application.auth.dto import AccessTokenDTO
 from application.auth.login_user import LoginUserInteractor
 from application.auth.validate_token import ValidateTokenInteractor
-from application.user.dto import UserDataDTO
+from application.user.dto import UserDTO
 from bootstrap.di import init_container
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
@@ -41,7 +41,7 @@ async def login_user(
     container: Container = Depends(init_container),
 ) -> AccessTokenDTO:
     try:
-        user_data_dto: UserDataDTO = UserDataDTO(
+        user_data_dto: UserDTO = UserDTO(
             login=form_data.username,
             password=form_data.password,
         )
@@ -77,7 +77,7 @@ async def validate_token(
     container: Container = Depends(init_container),
 ) -> GetMeResponseSchema:
     try:
-        access_token_dto: AccessTokenDTO = AccessTokenDTO(access_token=token)
+        access_token_dto: AccessTokenDTO = AccessTokenDTO(jwt_token=token)
         validate_token_action: ValidateTokenInteractor = container.resolve(
             ValidateTokenInteractor,
         )

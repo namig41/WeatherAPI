@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class UserDataDTO:
+class UserDTO:
     login: str | None = None
     email: str | None = None
     password: str | None = None

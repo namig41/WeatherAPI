@@ -2,17 +2,13 @@ from dataclasses import dataclass
 
 from application.auth.dto import AccessTokenDTO
 from application.common.interactor import Interactor
-from application.user.dto import UserDataDTO
+from application.user.dto import UserDTO
 from domain.entities.user import User
 from domain.interfaces.infrastructure.access_service import IAuthAccessService
 from domain.value_objects.raw_password import RawPassword
 from infrastructure.auth.access_token_processor import AccessTokenProcessor
 from infrastructure.email.base import IEmailClientService
-from infrastructure.email.email_config_factory import (
-    ConfirmationEmailConfigFactory,
-    EmailMessageType,
-)
-from infrastructure.email.services.user import send_user_authorization_email
+from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
 from infrastructure.jwt.access_token import (
     AccessToken,
     JWTPayload,
@@ -22,7 +18,7 @@ from infrastructure.repository.base import BaseUserRepository
 
 
 @dataclass
-class LoginUserInteractor(Interactor[UserDataDTO, AccessTokenDTO]):
+class LoginUserInteractor(Interactor[UserDTO, AccessTokenDTO]):
 
     auth_access_service: IAuthAccessService
     access_token_processor: AccessTokenProcessor
@@ -30,7 +26,7 @@ class LoginUserInteractor(Interactor[UserDataDTO, AccessTokenDTO]):
     email_service: IEmailClientService
     confirmation_email_config: ConfirmationEmailConfigFactory
 
-    async def __call__(self, user_dto: UserDataDTO) -> AccessTokenDTO:
+    async def __call__(self, user_dto: UserDTO) -> AccessTokenDTO:
         await self.auth_access_service.authorize(
             login=user_dto.login,
             raw_password=RawPassword(user_dto.password),
@@ -44,10 +40,4 @@ class LoginUserInteractor(Interactor[UserDataDTO, AccessTokenDTO]):
         access_token: AccessToken = AccessToken.create_with_expiration(payload)
         jwt_token: JWTToken = self.access_token_processor.encode(access_token)
 
-        await send_user_authorization_email(
-            user,
-            self.confirmation_email_config.create(EmailMessageType.AUTHORIZATION),
-            self.email_service,
-        )
-
-        return AccessTokenDTO(access_token=jwt_token, token_type="Bearer")
+        return AccessTokenDTO(jwt_token=jwt_token, type="Bearer")

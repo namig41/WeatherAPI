@@ -22,16 +22,20 @@ class AdminAuth(AuthenticationBackend):
         request: Request,
     ) -> bool:
         container: Container = init_container()
-        access_token_processor: AccessTokenProcessor = container.resolve(AccessTokenProcessor)
+        access_token_processor: AccessTokenProcessor = container.resolve(
+            AccessTokenProcessor,
+        )
 
         form = await request.form()
         username, password = form["username"], form["password"]
 
-        if (username == config.ADMIN_USERNAME and password == config.ADMIN_PASSWORD):
+        if username == config.ADMIN_USERNAME and password == config.ADMIN_PASSWORD:
             payload: JWTPayload = JWTPayload.from_dict(
                 {"user_id": hash(password), "login": username},
             )
-            access_token: AccessToken = AccessToken.create_with_expiration(payload, minutes=30)
+            access_token: AccessToken = AccessToken.create_with_expiration(
+                payload, minutes=30,
+            )
             jwt_token: JWTToken = access_token_processor.encode(access_token)
             request.session.update({"token": jwt_token})
 
@@ -48,7 +52,9 @@ class AdminAuth(AuthenticationBackend):
         request: Request,
     ) -> Response | bool:
         container: Container = init_container()
-        access_token_processor: AccessTokenProcessor = container.resolve(AccessTokenProcessor)
+        access_token_processor: AccessTokenProcessor = container.resolve(
+            AccessTokenProcessor,
+        )
 
         jwt_token: JWTToken | None = request.session.get("token")
         if jwt_token is None:

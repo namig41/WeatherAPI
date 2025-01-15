@@ -15,8 +15,10 @@
             Weather Tracker
         </a>
         <div class="d-flex align-items-center">
-            <span class="navbar-text me-3">zhukovsd</span>
-            <button class="btn btn-outline-danger">Sign out</button>
+            <span class="navbar-text me-3">{{username}}</span>
+            <form method="post" action="/logout">
+                <button type="submit" class="btn btn-outline-danger">Sign out</button>
+            </form>
         </div>
     </div>
 </nav>

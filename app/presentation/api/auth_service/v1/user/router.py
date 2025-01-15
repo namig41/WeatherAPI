@@ -11,7 +11,7 @@ from punq import Container
 
 from application.user.add_user import AddUserInteractor
 from application.user.delete_user import DeleteUserInteractor
-from application.user.dto import UserDataDTO
+from application.user.dto import UserDTO
 from application.user.get_all_user import GetAllUserInteractor
 from application.user.get_user import GetUserInteractor
 from bootstrap.di import init_container
@@ -64,7 +64,7 @@ async def get_user(
     container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
-        user_dto: UserDataDTO = UserDataDTO(login=login)
+        user_dto: UserDTO = UserDTO(login=login)
         get_user_action: GetUserInteractor = container.resolve(GetUserInteractor)
         user: User = await get_user_action(user_dto)
     except ApplicationException as exception:
@@ -86,7 +86,7 @@ async def add_user(
     container: Container = Depends(init_container),
 ) -> GetUserResponseSchema:
     try:
-        user_dto: UserDataDTO = UserDataDTO(
+        user_dto: UserDTO = UserDTO(
             login=user_data.login,
             email=user_data.email,
             password=user_data.password,
@@ -111,7 +111,7 @@ async def delete_user(
     container: Container = Depends(init_container),
 ) -> None:
     try:
-        user_dto: UserDataDTO = UserDataDTO(login=login)
+        user_dto: UserDTO = UserDTO(login=login)
         user_delete_action: DeleteUserInteractor = container.resolve(
             DeleteUserInteractor,
         )

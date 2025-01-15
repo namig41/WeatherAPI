@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from application.common.interactor import Interactor
-from application.user.dto import UserDataDTO
+from application.user.dto import UserDTO
 from domain.entities.user import User
 from domain.interfaces.infrastructure.password_hasher import IPasswordHasher
 from domain.value_objects.raw_password import RawPassword
@@ -13,13 +13,13 @@ from infrastructure.task_queue.email_tasks.user import send_user_confirmation_em
 
 
 @dataclass
-class AddUserInteractor(Interactor[UserDataDTO, User]):
+class AddUserInteractor(Interactor[UserDTO, User]):
     users_repository: BaseUserRepository
     hasher_password: IPasswordHasher
     email_service: IEmailClientService
     confirmation_email_config: ConfirmationEmailConfigFactory
 
-    async def __call__(self, user_dto: UserDataDTO) -> User:
+    async def __call__(self, user_dto: UserDTO) -> User:
         await self.users_repository.user_exists(user_dto.login)
 
         user: User = User.create_with_raw_password(

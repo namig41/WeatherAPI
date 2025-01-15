@@ -16,7 +16,7 @@ class ValidateTokenInteractor(Interactor[AccessTokenDTO, User]):
 
     async def __call__(self, access_token_dto: AccessTokenDTO) -> User:
         access_token: AccessToken = self.access_token_processor.decode(
-            access_token_dto.access_token,
+            access_token_dto.jwt_token,
         )
         user: User = await self.users_repository.get_user_by_login(
             login=access_token.payload.login,
