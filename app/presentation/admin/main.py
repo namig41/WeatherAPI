@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from fastapi import FastAPI
 
 import uvicorn
@@ -7,6 +9,7 @@ from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from bootstrap.di import init_container
 from presentation.admin.lifespan import lifespan
+from presentation.admin.view.auth import AdminAuth
 from presentation.admin.view.location import LocationAdmin
 from presentation.admin.view.user import UserAdmin
 from settings.config import config
@@ -21,7 +24,13 @@ def create_app() -> FastAPI:
     container: Container = init_container()
     engine: AsyncEngine = container.resolve(AsyncEngine)
 
-    admin: Admin = Admin(app, engine)
+    authentication_backend: AdminAuth = AdminAuth(secret_key=str(uuid4()))
+
+    admin: Admin = Admin(
+        app=app,
+        engine=engine,
+        authentication_backend=authentication_backend,
+    )
 
     admin.add_view(UserAdmin)
     admin.add_view(LocationAdmin)

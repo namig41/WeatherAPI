@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     ADMIN_SERVICE_HOST: str
     ADMIN_SERVICE_PORT: int
 
+    ADMIN_USERNAME: str
+    ADMIN_PASSWORD: str
+
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_TEST_DB: str
