@@ -12,8 +12,8 @@ class AdminBase:
 
 
 class UserProxy(AdminBase):
-    __table__ = users  # Привязка к вашей таблице
+    __table__ = users
 
 
 class LocationProxy(AdminBase):
-    __table__ = locations  # Привязка к вашей таблице
+    __table__ = locations
