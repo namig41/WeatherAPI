@@ -8,6 +8,7 @@ from domain.value_objects.raw_password import RawPassword
 from domain.value_objects.user_email import UserEmail
 from infrastructure.email.base import IEmailClientService
 from infrastructure.email.email_config_factory import ConfirmationEmailConfigFactory
+from infrastructure.message_broker.producer.user import send_user_notification
 from infrastructure.repository.base import BaseUserRepository
 from infrastructure.task_queue.email_tasks.user import send_user_confirmation_email
 
@@ -23,10 +24,10 @@ class AddUserInteractor(Interactor[UserDTO, User]):
         await self.users_repository.user_exists(user_dto.login)
 
         user: User = User.create_with_raw_password(
-            user_dto.login,
-            UserEmail(user_dto.email),
-            RawPassword(user_dto.password),
-            self.hasher_password,
+            login=user_dto.login,
+            email=UserEmail(user_dto.email),
+            raw_password=RawPassword(user_dto.password),
+            password_hasher=self.hasher_password,
         )
         await self.users_repository.add_user(user)
 
@@ -34,5 +35,7 @@ class AddUserInteractor(Interactor[UserDTO, User]):
             user.login,
             user.email.to_raw(),
         )
+
+        await send_user_notification(user.login)
 
         return user

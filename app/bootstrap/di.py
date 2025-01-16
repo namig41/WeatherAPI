@@ -47,6 +47,7 @@ from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
 from infrastructure.logger.base import ILogger
 from infrastructure.logger.logger import create_logger_dependency
+from infrastructure.message_broker.config import EventBusConfig
 from infrastructure.repository.base import (
     BaseUserLocationRepository,
     BaseUserRepository,
@@ -89,6 +90,14 @@ def _init_container() -> Container:
     container.register(
         ILogger,
         factory=create_logger_dependency,
+        scope=Scope.singleton,
+    )
+
+    event_bus_config: EventBusConfig = EventBusConfig()
+
+    container.register(
+        EventBusConfig,
+        instance=event_bus_config,
         scope=Scope.singleton,
     )
 

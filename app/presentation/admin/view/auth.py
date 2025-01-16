@@ -34,7 +34,8 @@ class AdminAuth(AuthenticationBackend):
                 {"user_id": hash(password), "login": username},
             )
             access_token: AccessToken = AccessToken.create_with_expiration(
-                payload, minutes=30,
+                payload,
+                minutes=30,
             )
             jwt_token: JWTToken = access_token_processor.encode(access_token)
             request.session.update({"token": jwt_token})

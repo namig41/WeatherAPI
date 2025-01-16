@@ -1,14 +1,10 @@
-import logging
-
 import aio_pika
 import orjson
 from aio_pika.abc import AbstractChannel
 
-from .interface import MessageBroker
+from infrastructure.message_broker.base import MessageBroker
+
 from .message import Message
-
-
-logger = logging.getLogger(__name__)
 
 
 class MessageBrokerImpl(MessageBroker):
@@ -47,7 +43,6 @@ class MessageBrokerImpl(MessageBroker):
     ) -> None:
         exchange = await self._get_exchange(exchange_name)
         await exchange.publish(rq_message, routing_key=routing_key)
-        logger.debug("Message sent", extra={"rq_message": rq_message})
 
     async def _get_exchange(self, exchange_name: str) -> aio_pika.abc.AbstractExchange:
         return await self._channel.get_exchange(exchange_name, ensure=False)

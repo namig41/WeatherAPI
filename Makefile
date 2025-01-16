@@ -4,6 +4,7 @@ APP_FILE = docker_compose/app.yaml
 STORAGE_FILE = docker_compose/storage.yaml
 CACHE_FILE = docker_compose/cache.yaml
 WEBSERVER_FILE = docker_compose/web_server.yaml
+MESSAGE_BROKER_FILE = docker_compose/message_broker.yaml
 MIGRATION_SERVICE = migrations_service
 EXEC = docker exec -it
 ENV = --env-file .env
@@ -60,6 +61,19 @@ cache-drop:
 cache-rebuild:
 	${DC} -f ${CACHE_FILE} build --no-cache
 
+# === Message Broker Section ===
+.PHONY: broker
+broker-start:
+	${DC} -f ${MESSAGE_BROKER_FILE} up -d
+
+.PHONY: broker-drop
+broker-drop:
+	${DC} -f ${MESSAGE_BROKER_FILE} down
+
+.PHONY: broker-rebuild
+broker-rebuild:
+	${DC} -f ${MESSAGE_BROKER_FILE} build --no-cache
+
 # === Web Server Section ===
 .PHONY: webserver-start
 webserver-start:
@@ -98,12 +112,12 @@ db-reset:
 # === All Project ===
 .PHONY: all
 all:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} -f ${WEBSERVER_FILE} ${ENV} up --build -d
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} -f ${MESSAGE_BROKER_FILE} ${ENV} up --build -d
 
 .PHONY: all-drop
 all-drop:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE}  ${WEBSERVER_FILE} down
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} -f ${MESSAGE_BROKER_FILE} down
 
 .PHONY: all-remove
 all-remove:
-	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE}  ${WEBSERVER_FILE} rm -f
+	${DC} -f ${STORAGE_FILE} -f ${APP_FILE} -f ${CACHE_FILE} -f ${MESSAGE_BROKER_FILE} rm -f

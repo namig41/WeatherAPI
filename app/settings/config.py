@@ -43,5 +43,13 @@ class Settings(BaseSettings):
     SMTP_USERNAME: str
     SMTP_PASSWORD: str
 
+    MESSAGE_BROKER_HOST: str
+    MESSAGE_BROKER_PORT: int
+    MESSAGE_BROKER_UI_PORT: int
+    MESSAGE_BROKER_USER: str
+    MESSAGE_BROKER_PASSWORD: str
+
+    TELEGRAM_TOKEN: str
+
 
 config: Settings = Settings()
