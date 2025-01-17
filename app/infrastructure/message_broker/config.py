@@ -4,7 +4,7 @@ from settings.config import config
 
 
 @dataclass(frozen=True)
-class EventBusConfig:
+class MessageBrokerConfig:
     host: str = config.MESSAGE_BROKER_HOST
     port: int = config.MESSAGE_BROKER_PORT
     login: str = config.MESSAGE_BROKER_USER
@@ -12,4 +12,4 @@ class EventBusConfig:
 
     @property
     def get_url(self) -> str:
-        return f"amqp://{self.login}:{self.password}@localhost:{self.port}/"
+        return f"amqp://{self.login}:{self.password}@{self.host}:{self.port}/"

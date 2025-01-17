@@ -1,10 +1,18 @@
-from abc import abstractmethod
-from typing import Protocol
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from dataclasses import dataclass
 
-from .message import Message
+from aio_pika.abc import AbstractChannel
+
+from infrastructure.message_broker.message import Message
 
 
-class MessageBroker(Protocol):
+@dataclass
+class BaseMessageBroker(ABC):
+    channel: AbstractChannel
+
     @abstractmethod
     async def publish_message(
         self,
@@ -15,3 +23,6 @@ class MessageBroker(Protocol):
 
     @abstractmethod
     async def declare_exchange(self, exchange_name: str) -> None: ...
+
+    async def set_channel(self, channel: AbstractChannel) -> None:
+        self.channel = channel

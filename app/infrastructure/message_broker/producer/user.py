@@ -1,12 +1,6 @@
-from infrastructure.message_broker.config import EventBusConfig
-from infrastructure.message_broker.init import init_message_broker
 from infrastructure.message_broker.message import Message
 
 
-broker = init_message_broker(EventBusConfig())
-
-
-@broker.publisher("user.notifications")
 async def send_user_notification(user_name: str) -> None:
     message: Message = Message(
         data=(
@@ -17,4 +11,4 @@ async def send_user_notification(user_name: str) -> None:
         ),
     )
 
-    await broker.publish(message=message.to_json(), routing_key="user.notifications")
+    print(message.data)

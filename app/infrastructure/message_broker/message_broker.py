@@ -1,16 +1,14 @@
+from dataclasses import dataclass
+
 import aio_pika
 import orjson
-from aio_pika.abc import AbstractChannel
 
-from infrastructure.message_broker.base import MessageBroker
-
-from .message import Message
+from infrastructure.message_broker.base import BaseMessageBroker
+from infrastructure.message_broker.message import Message
 
 
-class MessageBrokerImpl(MessageBroker):
-    def __init__(self, channel: AbstractChannel) -> None:
-        self._channel = channel
-
+@dataclass
+class RabbitMQMessageBroker(BaseMessageBroker):
     async def publish_message(
         self,
         message: Message,
@@ -21,7 +19,7 @@ class MessageBrokerImpl(MessageBroker):
         await self._publish_message(rq_message, routing_key, exchange_name)
 
     async def declare_exchange(self, exchange_name: str) -> None:
-        await self._channel.declare_exchange(exchange_name, aio_pika.ExchangeType.TOPIC)
+        await self.channel.declare_exchange(exchange_name, aio_pika.ExchangeType.TOPIC)
 
     @staticmethod
     def build_message(message: Message) -> aio_pika.Message:
@@ -45,4 +43,4 @@ class MessageBrokerImpl(MessageBroker):
         await exchange.publish(rq_message, routing_key=routing_key)
 
     async def _get_exchange(self, exchange_name: str) -> aio_pika.abc.AbstractExchange:
-        return await self._channel.get_exchange(exchange_name, ensure=False)
+        return await self.channel.get_exchange(exchange_name, ensure=False)

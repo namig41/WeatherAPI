@@ -47,7 +47,13 @@ from infrastructure.jwt.config import JWTConfig
 from infrastructure.jwt.jwt_processor import PyJWTProcessor
 from infrastructure.logger.base import ILogger
 from infrastructure.logger.logger import create_logger_dependency
-from infrastructure.message_broker.config import EventBusConfig
+from infrastructure.message_broker.base import BaseMessageBroker
+from infrastructure.message_broker.config import MessageBrokerConfig
+from infrastructure.message_broker.message_broker import RabbitMQMessageBroker
+from infrastructure.message_broker.message_broker_factory import (
+    ChannelFactory,
+    ConnectionFactory,
+)
 from infrastructure.repository.base import (
     BaseUserLocationRepository,
     BaseUserRepository,
@@ -65,158 +71,204 @@ from settings.config import (
 )
 
 
+# Cache the initialization of the container to ensure singleton behavior
 @lru_cache(1)
 def init_container() -> Container:
     return _init_container()
 
 
+# Initialize the dependency injection container
 def _init_container() -> Container:
     container: Container = Container()
 
+    # Register global settings
     container.register(
         Settings,
         instance=config,
         scope=Scope.singleton,
     )
 
-    jwt_config: JWTConfig = JWTConfig()
-
-    container.register(
-        JWTConfig,
-        instance=jwt_config,
-        scope=Scope.singleton,
-    )
-
+    # Register logger
     container.register(
         ILogger,
         factory=create_logger_dependency,
         scope=Scope.singleton,
     )
 
-    event_bus_config: EventBusConfig = EventBusConfig()
-
+    # Register message broker configuration
+    message_broker_config: MessageBrokerConfig = MessageBrokerConfig()
     container.register(
-        EventBusConfig,
-        instance=event_bus_config,
+        MessageBrokerConfig,
+        instance=message_broker_config,
         scope=Scope.singleton,
     )
 
+    # Register database configuration
+    db_config: DBConfig = DBConfig()
+    container.register(
+        DBConfig,
+        instance=db_config,
+        scope=Scope.singleton,
+    )
+
+    # Register database engine
     container.register(
         AsyncEngine,
-        factory=partial(init_database, db_config=DBConfig()),
+        factory=partial(init_database, db_config=db_config),
         scope=Scope.singleton,
     )
 
+    # Register user repository
     container.register(
         BaseUserRepository,
         PostgreSQLUserRepository,
         scope=Scope.singleton,
     )
+
+    # Register location repository
     container.register(
         BaseUserLocationRepository,
         PostgreSQLUserLocationRepository,
         scope=Scope.singleton,
     )
 
+    # Register authentication configuration
+    auth_config: AuthConfig = AuthConfig()
     container.register(
         AuthConfig,
-        instance=AuthConfig(),
+        instance=auth_config,
         scope=Scope.singleton,
     )
 
+    # Register authentication services
     container.register(
         AuthServiceAPI,
         scope=Scope.singleton,
     )
 
+    # Register password hasher
     container.register(
         IPasswordHasher,
         SHA256PasswordHasher,
         scope=Scope.singleton,
     )
 
+    # Register authentication access service
     container.register(
         IAuthAccessService,
         PasswordAuthService,
         scope=Scope.singleton,
     )
 
+    # Register JWT configuration
+    jwt_config: JWTConfig = JWTConfig()
+    container.register(
+        JWTConfig,
+        instance=jwt_config,
+        scope=Scope.singleton,
+    )
+
+    # Register JWT processor
     container.register(
         BaseJWTProcessor,
         PyJWTProcessor,
         scope=Scope.singleton,
     )
 
+    # Register access token processor
     container.register(
         AccessTokenProcessor,
         scope=Scope.singleton,
     )
 
+    # Register weather API configuration
+    weather_config: WeatherAPIConfig = WeatherAPIConfig()
     container.register(
         WeatherAPIConfig,
-        instance=WeatherAPIConfig(),
+        instance=weather_config,
         scope=Scope.singleton,
     )
 
+    # Register weather API service
     container.register(
         IWeatherAPIService,
         OpenWeatherAPIService,
         scope=Scope.singleton,
     )
 
+    # Register cache configuration
+    cache_config: CacheConfig = CacheConfig()
     container.register(
         Redis,
-        factory=partial(init_redis, cache_config=CacheConfig()),
+        factory=partial(init_redis, cache_config=cache_config),
         scope=Scope.singleton,
     )
 
+    # Register cache weather service
     container.register(
         ICacheWeatherService,
         RedisCacheWeatherService,
         scope=Scope.singleton,
     )
 
+    # Register email configuration
     smtp_config: SMTPConfig = SMTPConfig()
-
     container.register(
         SMTPConfig,
         instance=smtp_config,
         scope=Scope.singleton,
     )
 
+    # Register email-related services
     container.register(
         ConfirmationEmailConfigFactory,
         scope=Scope.singleton,
     )
-
     container.register(
         SMTP,
         factory=partial(init_smtp_client, smtp_config=smtp_config),
         scope=Scope.singleton,
     )
-
     container.register(
         IEmailClientService,
         SMTPEmailClient,
         scope=Scope.singleton,
     )
 
-    # AUTH UseCase
+    # Register Message Broker
+    message_broker_config: MessageBrokerConfig = MessageBrokerConfig()
+    container.register(
+        MessageBrokerConfig,
+        instance=message_broker_config,
+        scope=Scope.singleton,
+    )
+
+    container.register(ConnectionFactory)
+    container.register(ChannelFactory)
+
+    container.register(
+        BaseMessageBroker,
+        RabbitMQMessageBroker,
+        scope=Scope.singleton,
+    )
+
+    # Register authentication use cases
     container.register(LoginUserInteractor)
     container.register(ValidateTokenInteractor)
 
-    # User UseCase
+    # Register user use cases
     container.register(AddUserInteractor)
     container.register(DeleteUserInteractor)
     container.register(GetUserInteractor)
     container.register(GetAllUserInteractor)
 
-    # Location UseCase
+    # Register location use cases
     container.register(AddLocationInteractor)
     container.register(DeleteLocationInteractor)
     container.register(GetLocationInteractor)
     container.register(GetAllLocationInteractor)
 
-    # Weather UseCase
+    # Register weather use case
     container.register(GetWeatherInteractor)
+
     return container

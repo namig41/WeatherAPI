@@ -4,12 +4,12 @@ import aio_pika
 from aio_pika.abc import AbstractRobustConnection
 from aio_pika.pool import Pool
 
-from .config import EventBusConfig
+from .config import MessageBrokerConfig
 
 
 @dataclass
 class ConnectionFactory:
-    config: EventBusConfig
+    config: MessageBrokerConfig
 
     async def get_connection(self) -> AbstractRobustConnection:
         return await aio_pika.connect_robust(
