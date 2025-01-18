@@ -1,14 +1,10 @@
+from infrastructure.message_broker.constants import USER_EXCHANGE_NAME
 from infrastructure.message_broker.message import Message
+from infrastructure.message_broker.producer.base import BaseProducer
 
 
-async def send_user_notification(user_name: str) -> None:
-    message: Message = Message(
-        data=(
-            f"Здравствуйте, {user_name}!\n\n"
-            f"Благодарим вас за регистрацию на нашем сервисе. Ваш аккаунт был успешно создан.\n\n"
-            f"Если у вас возникнут вопросы, пожалуйста, свяжитесь с нашей службой поддержки.\n\n"
-            f"С уважением, WeatherAPI"
-        ),
-    )
-
-    print(message.data)
+class UserProducer(BaseProducer):
+    async def publish(self, message: Message) -> None:
+        await self.message_broker.publish_message(
+            message, "user.user", USER_EXCHANGE_NAME,
+        )

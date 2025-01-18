@@ -4,14 +4,15 @@ from abc import (
 )
 from dataclasses import dataclass
 
-from aio_pika.abc import AbstractChannel
+from aio_pika.abc import AbstractQueue
 
 from infrastructure.message_broker.message import Message
+from infrastructure.message_broker.message_broker_factory import ConnectionFactory
 
 
 @dataclass
 class BaseMessageBroker(ABC):
-    channel: AbstractChannel
+    connection_factory: ConnectionFactory
 
     @abstractmethod
     async def publish_message(
@@ -24,5 +25,16 @@ class BaseMessageBroker(ABC):
     @abstractmethod
     async def declare_exchange(self, exchange_name: str) -> None: ...
 
-    async def set_channel(self, channel: AbstractChannel) -> None:
-        self.channel = channel
+    @abstractmethod
+    async def declare_queue(
+        self,
+        queue_name: str,
+        exchange_name: str,
+        routing_key: str,
+    ) -> AbstractQueue: ...
+
+    @abstractmethod
+    async def connect(self) -> None: ...
+
+    @abstractmethod
+    async def close(self) -> None: ...

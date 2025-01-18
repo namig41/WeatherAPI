@@ -5,8 +5,8 @@ import uvicorn
 
 from presentation.api.auth_service.v1.auth.router import router as auth_router
 from presentation.api.auth_service.v1.healthcheck import router as healthcheck_router
+from presentation.api.auth_service.v1.lifespan import lifespan
 from presentation.api.auth_service.v1.user.router import router as user_router
-from presentation.api.lifespan import lifespan
 from settings.config import config
 
 

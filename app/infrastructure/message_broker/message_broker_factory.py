@@ -4,7 +4,7 @@ import aio_pika
 from aio_pika.abc import AbstractRobustConnection
 from aio_pika.pool import Pool
 
-from .config import MessageBrokerConfig
+from infrastructure.message_broker.config import MessageBrokerConfig
 
 
 @dataclass

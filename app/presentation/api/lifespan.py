@@ -19,5 +19,4 @@ async def lifespan(app: FastAPI):
     engine: AsyncEngine = container.resolve(AsyncEngine)
     await create_database(engine)
     start_entity_mappers()
-
     yield

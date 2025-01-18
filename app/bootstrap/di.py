@@ -4,6 +4,10 @@ from functools import (
 )
 from smtplib import SMTP
 
+from aio_pika.abc import (
+    AbstractChannel,
+    AbstractConnection,
+)
 from aioredis import Redis
 from punq import (
     Container,
@@ -50,10 +54,9 @@ from infrastructure.logger.logger import create_logger_dependency
 from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.message_broker.config import MessageBrokerConfig
 from infrastructure.message_broker.message_broker import RabbitMQMessageBroker
-from infrastructure.message_broker.message_broker_factory import (
-    ChannelFactory,
-    ConnectionFactory,
-)
+from infrastructure.message_broker.message_broker_factory import ConnectionFactory
+from infrastructure.message_broker.producer.user import UserProducer
+from infrastructure.message_broker.producer.weather import WeatherProducer
 from infrastructure.repository.base import (
     BaseUserLocationRepository,
     BaseUserRepository,
@@ -236,21 +239,26 @@ def _init_container() -> Container:
     )
 
     # Register Message Broker
-    message_broker_config: MessageBrokerConfig = MessageBrokerConfig()
+    message_broker_config: MessageBrokerConfig = MessageBrokerConfig(host="rabbitmq")
     container.register(
         MessageBrokerConfig,
         instance=message_broker_config,
         scope=Scope.singleton,
     )
 
-    container.register(ConnectionFactory)
-    container.register(ChannelFactory)
+    container.register(ConnectionFactory, scope=Scope.singleton)
+
+    container.register(AbstractConnection, instance=None)
+    container.register(AbstractChannel, instance=None)
 
     container.register(
         BaseMessageBroker,
         RabbitMQMessageBroker,
         scope=Scope.singleton,
     )
+
+    container.register(UserProducer)
+    container.register(WeatherProducer)
 
     # Register authentication use cases
     container.register(LoginUserInteractor)

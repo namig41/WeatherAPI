@@ -10,6 +10,8 @@ from infrastructure.database.utlis import (
     create_database,
     start_entity_mappers,
 )
+from infrastructure.message_broker.base import BaseMessageBroker
+from infrastructure.message_broker.init import configure_message_broker
 
 
 @asynccontextmanager
@@ -19,4 +21,9 @@ async def lifespan(app: FastAPI):
     engine: AsyncEngine = container.resolve(AsyncEngine)
     await create_database(engine)
     start_entity_mappers()
+
+    message_broker: BaseMessageBroker = container.resolve(BaseMessageBroker)
+    await message_broker.connect()
+    await configure_message_broker(message_broker)
+
     yield
