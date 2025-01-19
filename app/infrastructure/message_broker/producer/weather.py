@@ -6,5 +6,7 @@ from infrastructure.message_broker.producer.base import BaseProducer
 class WeatherProducer(BaseProducer):
     async def publish(self, message: Message) -> None:
         await self.message_broker.publish_message(
-            message, "weather.weather", WEATHER_EXCHANGE_NAME,
+            message,
+            "weather.weather",
+            WEATHER_EXCHANGE_NAME,
         )

@@ -40,7 +40,7 @@ aio-pika = "^9.5.4"
 orjson = "^3.10.14"
 uuid6 = "^2024.7.10"
 faststream = "^0.5.34"
-aiogram = "^3.17.0"
+aiogram = "3.14"
 
 
 [build-system]

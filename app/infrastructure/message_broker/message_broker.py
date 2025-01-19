@@ -50,7 +50,8 @@ class RabbitMQMessageBroker(BaseMessageBroker):
         routing_key: str,
     ) -> AbstractQueue:
         queue: AbstractQueue = await self.channel.declare_queue(
-            queue_name, durable=True,
+            queue_name,
+            durable=True,
         )
         await queue.bind(exchange_name, routing_key=routing_key)
         return queue

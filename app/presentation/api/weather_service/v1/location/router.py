@@ -55,7 +55,9 @@ async def get_all_location(
             filters=filters_schema.to_repository_filters(),
         )
 
-        locations: Iterable[Location] = await get_all_location_action(filter_location_dto)
+        locations: Iterable[Location] = await get_all_location_action(
+            filter_location_dto,
+        )
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
