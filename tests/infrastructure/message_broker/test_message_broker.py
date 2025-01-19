@@ -7,10 +7,7 @@ from punq import Container
 from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.message_broker.message import Message
 from infrastructure.message_broker.message_broker import RabbitMQMessageBroker
-from infrastructure.message_broker.message_broker_factory import (
-    ConnectionFactory,
-    MessageBrokerFactory,
-)
+from infrastructure.message_broker.message_broker_factory import ConnectionFactory
 
 
 @pytest.mark.asyncio
@@ -38,8 +35,8 @@ async def test_message_broker(container: Container):
 
 @pytest.mark.asyncio
 async def test_message_broker_with_factory(container: Container):
-    connection_factory: MessageBrokerFactory = container.resolve(MessageBrokerFactory)
-    message_broker: BaseMessageBroker = await connection_factory.get_message_broker()
+    message_broker: BaseMessageBroker = container.resolve(BaseMessageBroker)
+    await message_broker.connect()
 
     # Объявляем обменник
     exchange_name: str = "test_exchange"
@@ -54,4 +51,4 @@ async def test_message_broker_with_factory(container: Container):
         await message_broker.publish_message(message, routing_key, exchange_name)
         await asyncio.sleep(1)
 
-    message_broker.close()
+    await message_broker.close()
