@@ -6,7 +6,9 @@ from aio_pika.abc import (
     AbstractConnection,
     AbstractQueue,
 )
+from aiormq import AMQPConnectionError
 
+from infrastructure.exceptions.message_broker import MessageBrokerFailedConnectionException
 from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.message_broker.converters import build_message
 from infrastructure.message_broker.message import Message
@@ -54,10 +56,13 @@ class RabbitMQMessageBroker(BaseMessageBroker):
         return queue
 
     async def connect(self) -> None:
-        self.connection: AbstractConnection = (
-            await self.connection_factory.get_connection()
-        )
-        self.channel: AbstractChannel = await self.connection.channel()
+        try:
+            self.connection: AbstractConnection = (
+                await self.connection_factory.get_connection()
+            )
+            self.channel: AbstractChannel = await self.connection.channel()
+        except AMQPConnectionError:
+            raise MessageBrokerFailedConnectionException()
 
     async def close(self) -> None:
         await self.connection.close()

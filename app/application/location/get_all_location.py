@@ -2,21 +2,20 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from application.common.interactor import Interactor
-from application.location.dto import LocationDTO
+from application.location.dto import FiltersLocationDTO
 from domain.entities.location import Location
 from infrastructure.repository.base import BaseUserLocationRepository
-from infrastructure.repository.filters import RepositoryFilters
 
 
 @dataclass
-class GetAllLocationInteractor(Interactor[LocationDTO, Iterable[Location]]):
+class GetAllLocationInteractor(Interactor[FiltersLocationDTO, Iterable[Location]]):
     locations_repository: BaseUserLocationRepository
 
-    async def __call__(self, location_dto: LocationDTO) -> Iterable[Location]:
+    async def __call__(self, filters_location_dto: FiltersLocationDTO) -> Iterable[Location]:
         locations: Iterable[Location] = (
             await self.locations_repository.get_all_location(
-                user=location_dto.user,
-                filters=RepositoryFilters(),
+                user=filters_location_dto.location.user,
+                filters=filters_location_dto.filters,
             )
         )
 

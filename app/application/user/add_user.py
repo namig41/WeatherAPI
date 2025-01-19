@@ -39,7 +39,7 @@ class AddUserInteractor(Interactor[UserDTO, User]):
         )
 
         message: Message = Message(
-            data=user.login,
+            data={"login": user.login},
         )
 
         await self.user_producer.publish(message)

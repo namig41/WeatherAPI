@@ -12,13 +12,16 @@ from punq import Container
 from application.auth.auth_decorator import validate_token_decorator
 from application.location.add_location import AddLocationInteractor
 from application.location.delete_location import DeleteLocationInteractor
-from application.location.dto import LocationDTO
+from application.location.dto import (
+    FiltersLocationDTO,
+    LocationDTO,
+)
+from application.location.get_all_location import GetAllLocationInteractor
 from application.location.get_location import GetLocationInteractor
 from bootstrap.di import init_container
 from domain.entities.location import Location
 from domain.entities.user import User
 from domain.exceptions.base import ApplicationException
-from infrastructure.repository.base import BaseUserLocationRepository
 from presentation.api.common.filters import FiltersSchema
 from presentation.api.weather_service.v1.location.schema import (
     AddNewLocationRequestSchema,
@@ -43,13 +46,16 @@ async def get_all_location(
     container: Container = Depends(init_container),
 ) -> LocationsResponseSchema:
     try:
-        location_repository: BaseUserLocationRepository = container.resolve(
-            BaseUserLocationRepository,
+        get_all_location_action: GetAllLocationInteractor = container.resolve(
+            GetAllLocationInteractor,
         )
-        locations: Iterable[Location] = await location_repository.get_all_location(
-            user,
-            filters_schema.to_repository_filters(),
+
+        filter_location_dto: FiltersLocationDTO = FiltersLocationDTO(
+            location=LocationDTO(user=user),
+            filters=filters_schema.to_repository_filters(),
         )
+
+        locations: Iterable[Location] = await get_all_location_action(filter_location_dto)
     except ApplicationException as exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

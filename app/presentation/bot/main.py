@@ -38,7 +38,7 @@ async def handle_user_notification(aio_message: dict) -> None:
     try:
         message: BrokerMessage = BrokerMessage(**aio_message)
         print(f"Получено сообщение: {message.data}")
-        await bot.send_message(chat_id=688417643, text=message.data)
+        await bot.send_message(chat_id=688417643, text=message.data["login"])
     except Exception as e:
         print(f"Ошибка обработки сообщения: {e}")
 
